@@ -3,16 +3,16 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\GroupeRepository;
+use App\Repository\ProfilDeSortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ApiResource()
- * @ORM\Entity(repositoryClass=GroupeRepository::class)
+ * @ORM\Entity(repositoryClass=ProfilDeSortieRepository::class)
  */
-class Groupe
+class ProfilDeSortie
 {
     /**
      * @ORM\Id()
@@ -27,19 +27,9 @@ class Groupe
     private $libelle;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $projet;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="groupe")
+     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="profildesortie")
      */
     private $apprenants;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="groupes")
-     */
-    private $promo;
 
     public function __construct()
     {
@@ -63,18 +53,6 @@ class Groupe
         return $this;
     }
 
-    public function getProjet(): ?string
-    {
-        return $this->projet;
-    }
-
-    public function setProjet(string $projet): self
-    {
-        $this->projet = $projet;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Apprenant[]
      */
@@ -87,7 +65,7 @@ class Groupe
     {
         if (!$this->apprenants->contains($apprenant)) {
             $this->apprenants[] = $apprenant;
-            $apprenant->addGroupe($this);
+            $apprenant->setProfildesortie($this);
         }
 
         return $this;
@@ -97,20 +75,11 @@ class Groupe
     {
         if ($this->apprenants->contains($apprenant)) {
             $this->apprenants->removeElement($apprenant);
-            $apprenant->removeGroupe($this);
+            // set the owning side to null (unless already changed)
+            if ($apprenant->getProfildesortie() === $this) {
+                $apprenant->setProfildesortie(null);
+            }
         }
-
-        return $this;
-    }
-
-    public function getPromo(): ?Promo
-    {
-        return $this->promo;
-    }
-
-    public function setPromo(?Promo $promo): self
-    {
-        $this->promo = $promo;
 
         return $this;
     }
