@@ -2,14 +2,55 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\ProfilRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProfilRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * attributes = {
+ *              "security" = "is_granted('ROLE_Admin')",
+ *              "security_message" = "Accès refusé!"
+ *       },
+ * collectionOperations = {
+ *      "getProfils" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/profils",
+ *              "normalization_context"={"groups"={"profil:read"}},
+ *              
+ *       },
+ *       "getProfilById" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/profils/{id}",
+ *              "normalization_context"={"groups"={"profilbyid:read"}},
+ *              
+ *       },
+ *       "addProfil" = {
+ *              "method"= "POST",
+ *              "path" = "/admin/profils",
+ *              "normalization_context"={"groups"={"profil:write"}}   
+ *       },
+ * },
+ * 
+ * itemOperations = {
+ *      "editProfil"={
+ *          "method"= "PUT",
+ *          "path"= "/admin/profils/{id}", 
+ *          "normalization_context"={"groups"={"editprofil:read"}}, 
+ *      },
+ *      "deleteProfil"={
+ *          "method"= "DELETE",
+ *          "path"= "/admin/profils/{id}", 
+ *          "normalization_context"={"groups"={"deleteprofil:read"}}, 
+ *      },
+ * 
+ * },
+ *       
+ * )
  * @ORM\Entity(repositoryClass=ProfilRepository::class)
  */
 class Profil
@@ -18,16 +59,20 @@ class Profil
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"profil:read","profilbyid:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"profil:read","profil:write","editprofil:read","profilbyid:read"})
      */
     private $libelle;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
+     * ApiSubresource
+     * @Groups({"profil:read","profil:write"})
      */
     private $users;
 
