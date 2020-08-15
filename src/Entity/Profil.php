@@ -23,12 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "normalization_context"={"groups"={"profil:read"}},
  *              
  *       },
- *       "getProfilById" = {
- *              "method"= "GET",
- *              "path" = "/admin/profils/{id}",
- *              "normalization_context"={"groups"={"profilbyid:read"}},
- *              
- *       },
+ *       
  *       "addProfil" = {
  *              "method"= "POST",
  *              "path" = "/admin/profils",
@@ -37,6 +32,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * },
  * 
  * itemOperations = {
+ *      "getUsersOfProfil" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/profils/{id}/users",
+ *              "normalization_context"={"groups"={"usersofprofil:read"}},
+ *              
+ *       },
+ *      "getProfilById" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/profils/{id}",
+ *              "normalization_context"={"groups"={"profilbyid:read"}},
+ *              
+ *       },
  *      "editProfil"={
  *          "method"= "PUT",
  *          "path"= "/admin/profils/{id}", 
@@ -65,14 +72,14 @@ class Profil
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read","profil:write","editprofil:read","profilbyid:read"})
+     * @Groups({"profil:read","profil:write","editprofil:read","profilbyid:read","usersofprofil:read"})
      */
     private $libelle;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
      * ApiSubresource
-     * @Groups({"profil:read","profil:write"})
+     * @Groups({"profil:read","profil:write","usersofprofil:read"})
      */
     private $users;
 

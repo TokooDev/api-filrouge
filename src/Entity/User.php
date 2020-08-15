@@ -36,18 +36,19 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"profil:read"})
+     * @Groups({"profil:read","usersofprofil:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"profil:read"})
+     * @Groups({"profil:read","usersofprofil:read"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"profil:read","usersofprofil:read"})
      */
     private $email;
 
