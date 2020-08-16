@@ -2,14 +2,53 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\PromoRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PromoRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * attributes = {
+ *              "security" = "is_granted('ROLE_Admin')",
+ *              "security_message" = "Accès refusé!"
+ *       },
+ * normalizationContext ={"groups"={"promo:read"}},
+ * collectionOperations = {
+ *      "getPromos" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos"  
+ *       },
+ *      "addPromo" = {
+ *              "method"= "POST",
+ *              "path" = "/admin/promos"     
+ *       }
+ * },
+ * 
+ * itemOperations = {
+ *      "getApprenantsOfPromo" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}/apprenants/"
+ *              
+ *       },
+ *      "getPromoById" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}"
+ *              
+ *       },
+ *      "editPromo"={
+ *          "method"= "PUT",
+ *          "path"= "/admin/promos/{id}"
+ *      },
+ *      "deletePromo"={
+ *          "method"= "DELETE",
+ *          "path"= "/admin/promos/{id}"
+ *      },
+ * 
+ * },
+ * )
  * @ORM\Entity(repositoryClass=PromoRepository::class)
  */
 class Promo
@@ -18,51 +57,61 @@ class Promo
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"promo:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"promo:read"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"promo:read"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"promo:read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"promo:read"})
      */
     private $lieu;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"promo:read"})
      */
     private $referenceAgate;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"promo:read"})
      */
     private $fabrique;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"promo:read"})
      */
     private $dateDebut;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"promo:read"})
      */
     private $dateFin;
 
     /**
      * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promo")
+     * @Groups({"promo:read"})
      */
     private $groupes;
 

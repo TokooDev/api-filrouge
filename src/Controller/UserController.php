@@ -23,7 +23,7 @@ class UserController extends AbstractController
     private $archived;
     public function __construct(EntityManagerInterface $manager)
     {
-        $this -> archived = $manager;
+        $this->archived = $manager;
     }
     
     /**

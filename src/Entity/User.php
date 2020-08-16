@@ -51,7 +51,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"users:read","appreants:read"})
+     * @Groups({"users:read"})
      */
     private $id;
 
@@ -71,25 +71,25 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read",})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","promo:read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","promo:read"})
      */
     private $tel;
 

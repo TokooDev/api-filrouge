@@ -12,7 +12,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ * attributes = {
+ *              "security" = "is_granted('ROLE_Admin') or is_granted('ROLE_Formateur')",
+ *              "security_message" = "Accès refusé!"
+ *       },
  * normalizationContext ={"groups"={"appreants:read"}},
+ * collectionOperations = {
+ *      "getApprenants" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/apprenants"  
+ *       },
+ *      "addApprenant" = {
+ *              "method"= "POST",
+ *              "path" = "/admin/apprenants"     
+ *       }
+ * },
  * )
  * @ORM\Entity(repositoryClass=ApprenantRepository::class)
  */
@@ -27,20 +41,21 @@ class Apprenant
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read","profilsdesortie:read"})
+     * @Groups({"users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read","profilsdesortie:read"})
+     * @Groups({"users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $niveau;
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="apprenant", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"appreants:read","profilsdesortie:read"})
+     * @ApiSubresource
+     * @Groups({"appreants:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $user;
 
