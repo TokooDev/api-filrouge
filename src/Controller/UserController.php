@@ -47,6 +47,25 @@ class UserController extends AbstractController
 
     /**
      * @Route(
+     * name="userOfProfilList",
+     * path="api/admin/users",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\app\Controller\UserController::showUserOProfil",
+     * "_api_resource_class"=User::class,
+     * "_api_item_operation_name"="getUsersOfProfil"
+     * }
+     * )
+     */
+    public function showUserOProfil(UserRepository $repo)
+    {
+        $apprenants= $repo->findByArchived("0");
+        return $this->json($apprenants,Response::HTTP_OK,);
+
+    }
+
+    /**
+     * @Route(
      * name="addUser",
      * path="api/admin/users",
      * methods={"POST"},

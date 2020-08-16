@@ -17,11 +17,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "security" = "is_granted('ROLE_Admin')",
  *              "security_message" = "Accès refusé!"
  *       },
+ * normalizationContext ={"groups"={"profil:read"}},
  * collectionOperations = {
  *      "getProfils" = {
  *              "method"= "GET",
- *              "path" = "/admin/profils",
- *              "normalization_context"={"groups"={"profil:read"}}
+ *              "path" = "/admin/profils"
  *              
  *       },
  *       
@@ -35,14 +35,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * itemOperations = {
  *      "getUsersOfProfil" = {
  *              "method"= "GET",
- *              "path" = "/admin/profils/{id}/users/",
- *              "normalization_context"={"groups"={"usersofprofil:read"}}
+ *              "path" = "/admin/profils/{id}/users/"
  *              
  *       },
  *      "getProfilById" = {
  *              "method"= "GET",
- *              "path" = "/admin/profils/{id}",
- *              "normalization_context"={"groups"={"profilbyid:read"}}
+ *              "path" = "/admin/profils/{id}"
  *              
  *       },
  *      "editProfil"={
@@ -65,19 +63,20 @@ class Profil
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"usersofprofil:read","profilbyid:read"})
+     * @Groups({"profil:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users:read","profil:read","profilbyid:read","profil:write","usersofprofil:read"})
+     * @Groups({"users:read","profil:read","profil:write"})
      */
     private $libelle;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")  
-     * @Groups({"usersofprofil:read"})
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
+     * @ApiSubresource
+     * @Groups({"profil:read"})
      */
     private $users;
 

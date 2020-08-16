@@ -27,19 +27,20 @@ class Apprenant
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read"})
+     * @Groups({"users:read","appreants:read","profilsdesortie:read"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read"})
+     * @Groups({"users:read","appreants:read","profilsdesortie:read"})
      */
     private $niveau;
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="apprenant", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"appreants:read","profilsdesortie:read"})
      */
     private $user;
 

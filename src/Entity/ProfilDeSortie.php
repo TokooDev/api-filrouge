@@ -2,14 +2,56 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProfilDeSortieRepository;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * attributes = {
+ *              "security" = "is_granted('ROLE_Admin')",
+ *              "security_message" = "Accès refusé!"
+ *       },
+ * normalizationContext ={"groups"={"profilsdesortie:read"}},
+ * collectionOperations = {
+ *      "getProfilsDeSortie" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/profilsdesortie"
+ *              
+ *       },
+ *       
+ *       "addProfilsDeSortie" = {
+ *              "method"= "POST",
+ *              "path" = "/admin/profilsdesortie",
+ *              "normalization_context"={"groups"={"profilsdesortie:write"}}   
+ *       },
+ * },
+ * itemOperations = {
+ *      "getUsersOfProfilDeSortie" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/profilsdesortie/{id}/users/"
+ *              
+ *       },
+ *      "getProfilDeSortieById" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/profilsdesortie/{id}"
+ *              
+ *       },
+ *      "editProfilDeSortie"={
+ *          "method"= "PUT",
+ *          "path"= "/admin/profilsdesortie/{id}"
+ *      },
+ *      "deleteProfilDeSortie"={
+ *          "method"= "DELETE",
+ *          "path"= "/admin/profilsdesortie/{id}"
+ *      },
+ * 
+ * },
+ * )
  * @ORM\Entity(repositoryClass=ProfilDeSortieRepository::class)
  */
 class ProfilDeSortie
@@ -18,16 +60,20 @@ class ProfilDeSortie
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"profilsdesortie:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"profilsdesortie:read","profilsdesortie:write"})
      */
     private $libelle;
 
     /**
      * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="profildesortie")
+     * @ApiSubresource
+     * @Groups({"profilsdesortie:read"})
      */
     private $apprenants;
 

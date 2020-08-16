@@ -35,7 +35,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *              "controller" = UserController::class,
  *              "path" = "/users/{id}/archived",
  *              "route_name"= "archiverUser"    
- *       }
+ *       },
+ *       "getUsers" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/users",
+ *              "route_name"= "userOfProfilList"   
+ *       },
  * }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -46,13 +51,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"users:read","usersofprofil:read"})
+     * @Groups({"users:read","appreants:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"users:read","usersofprofil:read"})
+     * @Groups({"users:read","appreants:read","profil:read"})
      */
     private $username;
 
@@ -66,25 +71,25 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"profil:read","users:read","usersofprofil:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"profil:read","users:read","usersofprofil:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read","users:read","usersofprofil:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","usersofprofil:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $tel;
 
@@ -95,7 +100,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $genre;
 
