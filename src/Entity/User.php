@@ -9,6 +9,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -30,17 +34,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *       }
  * },
  * itemOperations = {
- *      "archiverUser" = {
- *              "method"= "PUT",
- *              "controller" = UserController::class,
- *              "path" = "/users/{id}/archived",
- *              "route_name"= "archiverUser"    
- *       },
- *       "getUsers" = {
- *              "method"= "GET",
- *              "path" = "/admin/users",
- *              "route_name"= "userOfProfilList"   
- *       },
+ *      "get"
+ *      
+ *       
  * }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -57,6 +53,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank(message="Le username ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 50,
+     *      minMessage = "Le username ne doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le username ne doit pas dépasser {{ limit }} charactères"
+     * )
      * @Groups({"users:read","appreants:read","profil:read"})
      */
     private $username;
@@ -66,6 +69,13 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Le mot de passe ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 8,
+     *      minMessage = "Le mot de passe ne doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le mot de passe ne doit pas dépasser {{ limit }} charactères"
+     * )
      */
     private $password;
 
@@ -83,6 +93,14 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le mail ne doit pas être vide")
+     * @Assert\Length(
+     *      max = 255,
+     *      maxMessage = "L'mail ne doit pas dépasser {{ limit }} charactères"
+     * )
+     * @Assert\Email(
+     *     message = "L'adresse '{{ value }}' n'est pas un email valide."
+     * )
      * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","promo:read"})
      */
     private $email;
@@ -94,7 +112,7 @@ class User implements UserInterface
     private $tel;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     private $archived;
 
@@ -106,8 +124,6 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToOne(targetEntity=Apprenant::class, mappedBy="user", cascade={"persist", "remove"})
-     * @ApiSubresource
-     * @Groups({"users:read"})
      */
     private $apprenant;
 

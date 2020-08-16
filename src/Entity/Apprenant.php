@@ -9,6 +9,9 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -24,8 +27,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       },
  *      "addApprenant" = {
  *              "method"= "POST",
- *              "path" = "/admin/apprenants"     
+ *              "path" = "/admin/apprenants"    
  *       }
+ * },
+ * 
+ * itemOperations = {
+ *      "getGroupesOfApprenant" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/apprenants/{id}/groupes/"
+ *              
+ *       },
+ *      "getApprenantById" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/apprenants/{id}"
+ *              
+ *       },
+ *      "editApprenant"={
+ *          "method"= "PUT",
+ *          "path"= "/admin/apprenants/{id}"
+ *      },
+ *      "deleteApprenant"={
+ *          "method"= "DELETE",
+ *          "path"= "/admin/apprenants/{id}"
+ *      },
+ * 
  * },
  * )
  * @ORM\Entity(repositoryClass=ApprenantRepository::class)
@@ -41,6 +66,13 @@ class Apprenant
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="Le statut ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 50,
+     *      minMessage = "Le statut ne doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le statut ne doit pas dépasser {{ limit }} charactères"
+     * )
      * @Groups({"users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $statut;
@@ -70,12 +102,6 @@ class Apprenant
      * @Groups({"appreants:read"})
      */
     private $profildesortie;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="apprenants")
-     * @Groups({"appreants:read"})
-     */
-    private $promo;
 
     public function __construct()
     {
@@ -157,18 +183,6 @@ class Apprenant
     public function setProfildesortie(?ProfilDeSortie $profildesortie): self
     {
         $this->profildesortie = $profildesortie;
-
-        return $this;
-    }
-
-    public function getPromo(): ?Promo
-    {
-        return $this->promo;
-    }
-
-    public function setPromo(?Promo $promo): self
-    {
-        $this->promo = $promo;
 
         return $this;
     }

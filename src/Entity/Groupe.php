@@ -7,7 +7,11 @@ use App\Repository\GroupeRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -63,15 +67,16 @@ class Groupe
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 100,
+     *      minMessage = "Le libelle ne doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
+     * )
      * @Groups({"appreants:read","groupe:read","promo:read"})
      */
     private $libelle;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read"})
-     */
-    private $projet;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="groupe")
@@ -83,6 +88,16 @@ class Groupe
      * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="groupes")
      */
     private $promo;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $archived;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $dateCreation;
 
     public function __construct()
     {
@@ -102,18 +117,6 @@ class Groupe
     public function setLibelle(string $libelle): self
     {
         $this->libelle = $libelle;
-
-        return $this;
-    }
-
-    public function getProjet(): ?string
-    {
-        return $this->projet;
-    }
-
-    public function setProjet(string $projet): self
-    {
-        $this->projet = $projet;
 
         return $this;
     }
@@ -154,6 +157,30 @@ class Groupe
     public function setPromo(?Promo $promo): self
     {
         $this->promo = $promo;
+
+        return $this;
+    }
+
+    public function getArchived(): ?bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(?bool $archived): self
+    {
+        $this->archived = $archived;
+
+        return $this;
+    }
+
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->dateCreation;
+    }
+
+    public function setDateCreation(\DateTimeInterface $dateCreation): self
+    {
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }

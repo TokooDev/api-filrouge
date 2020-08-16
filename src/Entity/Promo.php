@@ -8,6 +8,9 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -23,7 +26,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       },
  *      "addPromo" = {
  *              "method"= "POST",
- *              "path" = "/admin/promos"     
+ *              "path" = "/admin/promos",
+ *              "route_name" = "addPromo"     
  *       }
  * },
  * 
@@ -63,12 +67,26 @@ class Promo
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="La langue  ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 100,
+     *      minMessage = "La langue doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "La langue ne doit pas dépasser {{ limit }} charactères"
+     * )
      * @Groups({"promo:read"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le titre  ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 10,
+     *      max = 255,
+     *      minMessage = "Le titre ne doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le titre ne doit pas dépasser {{ limit }} charactères"
+     * )
      * @Groups({"promo:read"})
      */
     private $titre;
@@ -80,17 +98,10 @@ class Promo
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,nullable=true)
      * @Groups({"promo:read"})
      */
     private $lieu;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"promo:read"})
-     */
-    private $referenceAgate;
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"promo:read"})
@@ -98,13 +109,13 @@ class Promo
     private $fabrique;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      * @Groups({"promo:read"})
      */
     private $dateDebut;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      * @Groups({"promo:read"})
      */
     private $dateFin;
@@ -115,10 +126,11 @@ class Promo
      */
     private $groupes;
 
+
     /**
-     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="promo")
+     * @ORM\Column(type="boolean")
      */
-    private $apprenants;
+    private $archived;
 
     public function __construct()
     {
@@ -175,18 +187,6 @@ class Promo
     public function setLieu(string $lieu): self
     {
         $this->lieu = $lieu;
-
-        return $this;
-    }
-
-    public function getReferenceAgate(): ?string
-    {
-        return $this->referenceAgate;
-    }
-
-    public function setReferenceAgate(?string $referenceAgate): self
-    {
-        $this->referenceAgate = $referenceAgate;
 
         return $this;
     }
@@ -258,33 +258,15 @@ class Promo
         return $this;
     }
 
-    /**
-     * @return Collection|Apprenant[]
-     */
-    public function getApprenants(): Collection
+   
+    public function getArchived(): ?bool
     {
-        return $this->apprenants;
+        return $this->archived;
     }
 
-    public function addApprenant(Apprenant $apprenant): self
+    public function setArchived(?bool $archived): self
     {
-        if (!$this->apprenants->contains($apprenant)) {
-            $this->apprenants[] = $apprenant;
-            $apprenant->setPromo($this);
-        }
-
-        return $this;
-    }
-
-    public function removeApprenant(Apprenant $apprenant): self
-    {
-        if ($this->apprenants->contains($apprenant)) {
-            $this->apprenants->removeElement($apprenant);
-            // set the owning side to null (unless already changed)
-            if ($apprenant->getPromo() === $this) {
-                $apprenant->setPromo(null);
-            }
-        }
+        $this->archived = $archived;
 
         return $this;
     }
