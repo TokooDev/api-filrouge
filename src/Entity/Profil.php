@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProfilRepository;
 use Doctrine\Common\Collections\Collection;
@@ -20,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      "getProfils" = {
  *              "method"= "GET",
  *              "path" = "/admin/profils",
- *              "normalization_context"={"groups"={"profil:read"}},
+ *              "normalization_context"={"groups"={"profil:read"}}
  *              
  *       },
  *       
@@ -34,25 +35,23 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * itemOperations = {
  *      "getUsersOfProfil" = {
  *              "method"= "GET",
- *              "path" = "/admin/profils/{id}/users",
- *              "normalization_context"={"groups"={"usersofprofil:read"}},
+ *              "path" = "/admin/profils/{id}/users/",
+ *              "normalization_context"={"groups"={"usersofprofil:read"}}
  *              
  *       },
  *      "getProfilById" = {
  *              "method"= "GET",
  *              "path" = "/admin/profils/{id}",
- *              "normalization_context"={"groups"={"profilbyid:read"}},
+ *              "normalization_context"={"groups"={"profilbyid:read"}}
  *              
  *       },
  *      "editProfil"={
  *          "method"= "PUT",
- *          "path"= "/admin/profils/{id}", 
- *          "normalization_context"={"groups"={"editprofil:read"}}, 
+ *          "path"= "/admin/profils/{id}"
  *      },
  *      "deleteProfil"={
  *          "method"= "DELETE",
- *          "path"= "/admin/profils/{id}", 
- *          "normalization_context"={"groups"={"deleteprofil:read"}}, 
+ *          "path"= "/admin/profils/{id}"
  *      },
  * 
  * },
@@ -66,20 +65,19 @@ class Profil
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"profil:read","profilbyid:read"})
+     * @Groups({"usersofprofil:read","profilbyid:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read","profil:write","editprofil:read","profilbyid:read","usersofprofil:read"})
+     * @Groups({"users:read","profil:read","profilbyid:read","profil:write","usersofprofil:read"})
      */
     private $libelle;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
-     * ApiSubresource
-     * @Groups({"profil:read","profil:write","usersofprofil:read"})
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")  
+     * @Groups({"usersofprofil:read"})
      */
     private $users;
 

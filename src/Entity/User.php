@@ -2,14 +2,42 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\UserController;
+use App\Repository\UserRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * attributes = {
+ *              "security" = "is_granted('ROLE_Admin')",
+ *              "security_message" = "Accès refusé!"
+ *       },
+ * normalizationContext ={"groups"={"users:read"}},
+ * collectionOperations = {
+ *      "getUsers" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/users",
+ *              "route_name"= "userList"   
+ *       },
+ *      "addUser" = {
+ *              "method"= "POST",
+ *              "path" = "/admin/users",
+ *              "route_name"= "addUser"    
+ *       }
+ * },
+ * itemOperations = {
+ *      "archiverUser" = {
+ *              "method"= "PUT",
+ *              "controller" = UserController::class,
+ *              "path" = "/users/{id}/archived",
+ *              "route_name"= "archiverUser"    
+ *       }
+ * }
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface
@@ -18,11 +46,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"users:read","usersofprofil:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"users:read","usersofprofil:read"})
      */
     private $username;
 
@@ -36,24 +66,25 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"profil:read","usersofprofil:read"})
+     * @Groups({"profil:read","users:read","usersofprofil:read"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"profil:read","usersofprofil:read"})
+     * @Groups({"profil:read","users:read","usersofprofil:read"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"profil:read","usersofprofil:read"})
+     * @Groups({"profil:read","users:read","usersofprofil:read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"users:read","usersofprofil:read"})
      */
     private $tel;
 
@@ -64,16 +95,21 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"users:read"})
      */
     private $genre;
 
     /**
      * @ORM\OneToOne(targetEntity=Apprenant::class, mappedBy="user", cascade={"persist", "remove"})
+     * @ApiSubresource
+     * @Groups({"users:read"})
      */
     private $apprenant;
 
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
+     * @ApiSubresource
+     * @Groups({"users:read"})
      */
     private $profil;
 
