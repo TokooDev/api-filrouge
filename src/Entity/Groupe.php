@@ -41,9 +41,15 @@ class Groupe
      */
     private $promo;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Formateur::class, mappedBy="groupe")
+     */
+    private $formateurs;
+
     public function __construct()
     {
         $this->apprenants = new ArrayCollection();
+        $this->formateurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,6 +117,34 @@ class Groupe
     public function setPromo(?Promo $promo): self
     {
         $this->promo = $promo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Formateur[]
+     */
+    public function getFormateurs(): Collection
+    {
+        return $this->formateurs;
+    }
+
+    public function addFormateur(Formateur $formateur): self
+    {
+        if (!$this->formateurs->contains($formateur)) {
+            $this->formateurs[] = $formateur;
+            $formateur->addGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormateur(Formateur $formateur): self
+    {
+        if ($this->formateurs->contains($formateur)) {
+            $this->formateurs->removeElement($formateur);
+            $formateur->removeGroupe($this);
+        }
 
         return $this;
     }

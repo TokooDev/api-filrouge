@@ -26,11 +26,23 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *              "security_message"="ACCES REFUSE",
  *              "method"="GET",
  *              "path"="/admin/users", 
- *              
  *              "normalization_context"={"groups"={"user:read"}},     
  *            }
  * 
+ * },
+ * itemOperations={
+ *      "getUserId"={
+ *          "method"= "GET",
+ *          "path"= "/admin/users/{id}", 
+ *          "normalization_context"={"groups"={"users:read"}},  
+ *      },
+ *      "getUser"={
+ *          "method"= "PUT",
+ *          "path"= "/admin/users/{id}",
+ *          "normalization_context"={"groups"={"userrs:write"}},   
+ *      },
  * }
+ * 
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
@@ -40,7 +52,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"user:read"})
+     * @Groups({"user:read","users:read","userrs:write"})
      */
     private $id;
 
@@ -53,7 +65,7 @@ class User implements UserInterface
      *      minMessage = "Le username doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le username ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"user:read"})
+     * @Groups({"user:read","users:read","userrs:write"})
      *
      */
     private $username;
@@ -83,6 +95,7 @@ class User implements UserInterface
      *      minMessage = "Le prénom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le prénom ne doit pas dépasser {{ limit }} charactères"
      * )
+     * @Groups({"user:read","users:read","userrs:write","profils:read"})
      */
     private $prenom;
 
@@ -95,6 +108,7 @@ class User implements UserInterface
      *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"
      * )
+     * @Groups({"user:read","users:read","userrs:write","profils:read"})
      */
     private $nom;
 
@@ -109,6 +123,7 @@ class User implements UserInterface
      * @Assert\Email(
      *     message = "L'adresse '{{ value }}' n'est pas un email valide."
      * )
+     * @Groups({"user:read","users:read","userrs:write"})
      */
     private $email;
 
@@ -121,6 +136,7 @@ class User implements UserInterface
      *      minMessage = "Le numro de telephone doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le numero de telephone ne doit pas dépasser {{ limit }} charactères"
      * )
+     * @Groups({"user:read","users:read","userrs:write"})
      */
     private $tel;
 
@@ -131,6 +147,8 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read","users:read","userrs:write"})
+     * 
      */
     private $genre;
 
@@ -141,12 +159,14 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
-     *  @Groups({"user:read"})
+     * 
+     *  @Groups({"user:read","users:read","userrs:write"})
      */
     private $profil;
 
     /**
      * @ORM\Column(type="blob", nullable=true)
+     * @Assert\NotBlank(message="L'avatar ne doit pas être vide")
      * 
      */
     private $avatar;
