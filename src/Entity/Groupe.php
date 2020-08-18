@@ -47,7 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "method"= "PUT",
  *          "path"= "/admin/groupes/{id}"
  *      },
- *      "archiveGroupe" = {
+ *      "archiverGroupe" = {
  *          "method"= "PUT",
  *          "path" = "/admin/groupes/{id}/archive",
  *          "controller" = ArchivageGroupeController::class   
