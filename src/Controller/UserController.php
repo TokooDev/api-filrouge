@@ -20,12 +20,6 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class UserController extends AbstractController
 {
-    private $archived;
-    public function __construct(EntityManagerInterface $manager)
-    {
-        $this->archived = $manager;
-    }
-    
     /**
      * @Route(
      * name="userList",
@@ -83,25 +77,6 @@ class UserController extends AbstractController
         $manager->flush();
         fclose($avatar);
         return $this->json($serializer->normalize($user),Response::HTTP_CREATED);
-    }
-
-    /**
-     * @Route(
-     * name="archiverUser",
-     * path="api/users/{id}/archived",
-     * methods={"PUT"},
-     * defaults={
-     * "_api_resource_class"=User::class,
-     * "_api_item_operation_name"="archiverUser"
-     * }
-     * )
-     */
-    
-    public function __invoke(User $data): User
-    {
-        $data->setArchived(1);
-        $this->archived->flush();
-        return $data;
     }
     
 }
