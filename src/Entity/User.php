@@ -43,14 +43,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *          "method"= "PUT",
  *          "path"= "/admin/users/{id}"  
  *      },
- * itemOperations = {
  *      "archiverUser" = {
  *          "method"= "PUT",
  *          "path" = "/admin/users/{id}/archive",
  *          "controller" = ArchivageUserController::class   
- *       }  
+ *       }
  * }
- * 
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
