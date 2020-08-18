@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PromoRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ArchivagePromoController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Length;
@@ -46,10 +47,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "method"= "PUT",
  *          "path"= "/admin/promos/{id}"
  *      },
- *      "deletePromo"={
- *          "method"= "DELETE",
- *          "path"= "/admin/promos/{id}"
- *      },
+ *      "archiverPromo" = {
+ *          "method"= "PUT",
+ *          "path" = "/admin/promos/{id}/archive",
+ *          "controller" = ArchivagePromoController::class   
+ *       } 
  * 
  * },
  * )

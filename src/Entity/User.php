@@ -5,14 +5,15 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\UserController;
 use App\Repository\UserRepository;
+use App\Controller\ArchivageUserController;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ApiResource(
@@ -42,6 +43,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "method"= "PUT",
  *          "path"= "/admin/users/{id}"  
  *      },
+ * itemOperations = {
+ *      "archiverUser" = {
+ *          "method"= "PUT",
+ *          "path" = "/admin/users/{id}/archive",
+ *          "controller" = ArchivageUserController::class   
+ *       }  
  * }
  * 
  * )

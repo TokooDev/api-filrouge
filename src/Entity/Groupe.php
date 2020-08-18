@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\GroupeRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\ArchivageGroupeController;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -46,10 +47,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "method"= "PUT",
  *          "path"= "/admin/groupes/{id}"
  *      },
- *      "archiveGroupe" = {
+ *      "archiverGroupe" = {
  *          "method"= "PUT",
  *          "path" = "/admin/groupes/{id}/archive",
- *          "route_name"= "archiveGroupe"    
+ *          "controller" = ArchivageGroupeController::class   
  *       }
  * 
  * },
