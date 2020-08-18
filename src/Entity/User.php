@@ -21,12 +21,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "security_message" = "Accès refusé!"
  *       },
  * normalizationContext ={"groups"={"users:read"}},
+ * collectionOperations = {
  *      "adUser"={
  *              "method"="POST",
  *              "route_name"="create",
- *              "path"="/admin/users",      
+ *              "path"="/admin/users"    
  *       }
- * 
  * },
  * itemOperations={
  *      "getUserById"={
