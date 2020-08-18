@@ -2,14 +2,57 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\PromoRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PromoRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * attributes = {
+ *              "security" = "is_granted('ROLE_Admin')",
+ *              "security_message" = "Accès refusé!"
+ *       },
+ * normalizationContext ={"groups"={"promo:read"}},
+ * collectionOperations = {
+ *      "getPromos" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos"  
+ *       },
+ *      "addPromo" = {
+ *              "method"= "POST",
+ *              "path" = "/admin/promos",
+ *              "route_name" = "addPromo"     
+ *       }
+ * },
+ * 
+ * itemOperations = {
+ *      "getApprenantsOfPromo" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}/apprenants/"
+ *              
+ *       },
+ *      "getPromoById" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/promos/{id}"
+ *              
+ *       },
+ *      "editPromo"={
+ *          "method"= "PUT",
+ *          "path"= "/admin/promos/{id}"
+ *      },
+ *      "deletePromo"={
+ *          "method"= "DELETE",
+ *          "path"= "/admin/promos/{id}"
+ *      },
+ * 
+ * },
+ * )
  * @ORM\Entity(repositoryClass=PromoRepository::class)
  */
 class Promo
@@ -18,58 +61,76 @@ class Promo
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"promo:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="La langue  ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 100,
+     *      minMessage = "La langue doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "La langue ne doit pas dépasser {{ limit }} charactères"
+     * )
+     * @Groups({"promo:read"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le titre  ne doit pas être vide")
+     * @Assert\Length(
+     *      min = 10,
+     *      max = 255,
+     *      minMessage = "Le titre ne doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le titre ne doit pas dépasser {{ limit }} charactères"
+     * )
+     * @Groups({"promo:read"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"promo:read"})
      */
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,nullable=true)
+     * @Groups({"promo:read"})
      */
     private $lieu;
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $referenceAgate;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"promo:read"})
      */
     private $fabrique;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
+     * @Groups({"promo:read"})
      */
     private $dateDebut;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
+     * @Groups({"promo:read"})
      */
     private $dateFin;
 
     /**
      * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promo")
+     * @Groups({"promo:read"})
      */
     private $groupes;
 
+
     /**
-     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="promo")
+     * @ORM\Column(type="boolean")
      */
-    private $apprenants;
+    private $archived;
 
     public function __construct()
     {
@@ -126,18 +187,6 @@ class Promo
     public function setLieu(string $lieu): self
     {
         $this->lieu = $lieu;
-
-        return $this;
-    }
-
-    public function getReferenceAgate(): ?string
-    {
-        return $this->referenceAgate;
-    }
-
-    public function setReferenceAgate(?string $referenceAgate): self
-    {
-        $this->referenceAgate = $referenceAgate;
 
         return $this;
     }
@@ -209,33 +258,15 @@ class Promo
         return $this;
     }
 
-    /**
-     * @return Collection|Apprenant[]
-     */
-    public function getApprenants(): Collection
+   
+    public function getArchived(): ?bool
     {
-        return $this->apprenants;
+        return $this->archived;
     }
 
-    public function addApprenant(Apprenant $apprenant): self
+    public function setArchived(?bool $archived): self
     {
-        if (!$this->apprenants->contains($apprenant)) {
-            $this->apprenants[] = $apprenant;
-            $apprenant->setPromo($this);
-        }
-
-        return $this;
-    }
-
-    public function removeApprenant(Apprenant $apprenant): self
-    {
-        if ($this->apprenants->contains($apprenant)) {
-            $this->apprenants->removeElement($apprenant);
-            // set the owning side to null (unless already changed)
-            if ($apprenant->getPromo() === $this) {
-                $apprenant->setPromo(null);
-            }
-        }
+        $this->archived = $archived;
 
         return $this;
     }

@@ -18,7 +18,6 @@ class ApprenantRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Apprenant::class);
     }
-
     // /**
     //  * @return Apprenant[] Returns an array of Apprenant objects
     //  */

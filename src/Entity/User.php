@@ -1,19 +1,21 @@
 <?php
 
 namespace App\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\UserController;
 use App\Repository\UserRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Validator\Constraints\Email;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ApiResource(
- * collectionOperations={
  * attributes = {
  *              "security" = "is_granted('ROLE_Admin')",
  *              "security_message" = "Accès refusé!"
@@ -56,11 +58,10 @@ class User implements UserInterface
      * @Assert\Length(
      *      min = 3,
      *      max = 50,
-     *      minMessage = "Le username doit avoir au moins {{ limit }} charactères",
+     *      minMessage = "Le username ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le username ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"user:read","users:read","userrs:write"})
-     *
+     * @Groups({"users:read","appreants:read","profil:read"})
      */
     private $username;
 
@@ -69,14 +70,13 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="Le password ne doit pas être vide")
+     * @Assert\NotBlank(message="Le mot de passe ne doit pas être vide")
      * @Assert\Length(
      *      min = 4,
      *      max = 8,
-     *      minMessage = "Le password doit avoir au moins {{ limit }} charactères",
-     *      maxMessage = "Le password ne doit pas dépasser {{ limit }} charactères"
+     *      minMessage = "Le mot de passe ne doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le mot de passe ne doit pas dépasser {{ limit }} charactères"
      * )
-     *
      */
     private $password;
 
@@ -89,7 +89,7 @@ class User implements UserInterface
      *      minMessage = "Le prénom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le prénom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"user:read","users:read","userrs:write","profils:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $prenom;
 
@@ -102,7 +102,7 @@ class User implements UserInterface
      *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"user:read","users:read","userrs:write","profils:read"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $nom;
 
@@ -117,7 +117,7 @@ class User implements UserInterface
      * @Assert\Email(
      *     message = "L'adresse '{{ value }}' n'est pas un email valide."
      * )
-     * @Groups({"user:read","users:read","userrs:write"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","promo:read"})
      */
     private $email;
 
@@ -130,19 +130,18 @@ class User implements UserInterface
      *      minMessage = "Le numro de telephone doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le numero de telephone ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"user:read","users:read","userrs:write"})
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","promo:read"})
      */
     private $tel;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     private $archived;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","users:read","userrs:write"})
-     * 
+     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $genre;
 
@@ -153,8 +152,8 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
-     * 
-     *  @Groups({"user:read","users:read","userrs:write"})
+     * @ApiSubresource
+     * @Groups({"users:read"})
      */
     private $profil;
 

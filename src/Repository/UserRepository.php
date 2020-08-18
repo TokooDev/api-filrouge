@@ -35,7 +35,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->persist($user);
         $this->_em->flush();
     }
-
+    public function findByArchived($value)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.archived = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     // /**
     //  * @return User[] Returns an array of User objects
     //  */
@@ -54,7 +62,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     */
 
     /*
-    public function findOneBySomeField($value): ?User
+    public function findOneBySo($value): ?User
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.exampleField = :val')
