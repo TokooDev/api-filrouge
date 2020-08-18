@@ -41,7 +41,7 @@ class PromoController extends AbstractController
             ->setArchived(0)
         ;
         $groupe=new Groupe();
-        $groupe->setArchived(1)
+        $groupe->setArchived(0)
             ->setLibelle("Groupe principal")
             ->setDateCreation(new \DateTime)
         ;

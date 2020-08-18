@@ -64,18 +64,6 @@ class UserController extends AbstractController
 
     }
 
-    /**
-     * @Route(
-     * name="addUser",
-     * path="api/admin/users",
-     * methods={"POST"},
-     * defaults={
-     * "_controller"="\app\Controller\UserController::addUser",
-     * "_api_resource_class"=User::class,
-     * "_api_collection_operation_name"="addUser"
-     * }
-     * )
-     */
     public function addUser(Request $request,UserPasswordEncoderInterface $encoder,SerializerInterface $serializer,ValidatorInterface $validator,EntityManagerInterface $manager,\Swift_Mailer $mailer)
     {
         $user = $request->request->all();
@@ -94,12 +82,6 @@ class UserController extends AbstractController
         $manager->persist($user);
         $manager->flush();
         fclose($avatar);
-        /*$message=(new\Swift_Message)
-            ->setSubject('Orange Digital Center, SONATEL ACADEMY')
-            ->setFrom('mainashou@gmail.com')
-            ->setTo($user->getEmail())
-            ->setBody("Bienvenue cher apprenant vous avez intégré la promotion de la première école de codage gratuite du Sénégal, veuillez utiliser ce login: ".$user->getLogin()." et ce password : ".$password." par defaut pour se connecter");
-        $mailer->send($message);*/
         return $this->json($serializer->normalize($user),Response::HTTP_CREATED);
     }
 

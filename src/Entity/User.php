@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      "addUser" = {
  *              "method"= "POST",
  *              "path" = "/admin/users",
- *              "route_name"= "addUser"    
+ *              "route_name"= "create"    
  *       }
  * },
  * itemOperations = {

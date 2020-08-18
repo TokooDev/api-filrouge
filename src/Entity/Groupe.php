@@ -46,10 +46,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "method"= "PUT",
  *          "path"= "/admin/groupes/{id}"
  *      },
- *      "deleteGroupe"={
- *          "method"= "DELETE",
- *          "path"= "/admin/groupes/{id}"
- *      },
+ *      "archiveGroupe" = {
+ *          "method"= "PUT",
+ *          "path" = "/admin/groupes/{id}/archive",
+ *          "route_name"= "archiveGroupe"    
+ *       }
  * 
  * },
  * )
@@ -66,7 +67,7 @@ class Groupe
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
      * @Assert\Length(
      *      min = 3,
@@ -95,7 +96,7 @@ class Groupe
     private $archived;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $dateCreation;
 
