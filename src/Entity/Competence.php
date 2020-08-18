@@ -61,19 +61,19 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     *@Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write"})
+     *@Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, inversedBy="competences")
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      */
     private $niveauDevaluation;
 

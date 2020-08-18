@@ -145,10 +145,7 @@ class User implements UserInterface
      */
     private $profil;
 
-    /**
-     * @ORM\Column(type="blob", nullable=true)
-     * 
-     */
+ 
     private $avatar;
 
     public function getId(): ?int

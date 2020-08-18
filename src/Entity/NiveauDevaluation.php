@@ -24,13 +24,13 @@ class NiveauDevaluation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      */
     private $Actions;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      */
     private $Criteres;
 
