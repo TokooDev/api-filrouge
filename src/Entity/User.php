@@ -14,32 +14,26 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ApiResource(
  * collectionOperations={
- *      "create"={
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="ACCES REFUSE",
+ * attributes = {
+ *              "security" = "is_granted('ROLE_Admin')",
+ *              "security_message" = "Accès refusé!"
+ *       },
+ * normalizationContext ={"groups"={"users:read"}},
+ *      "adUser"={
  *              "method"="POST",
  *              "route_name"="create",
  *              "path"="/admin/users",      
- *       },
- *       "recup"={
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="ACCES REFUSE",
- *              "method"="GET",
- *              "path"="/admin/users", 
- *              "normalization_context"={"groups"={"user:read"}},     
- *            }
+ *       }
  * 
  * },
  * itemOperations={
- *      "getUserId"={
+ *      "getUserById"={
  *          "method"= "GET",
- *          "path"= "/admin/users/{id}", 
- *          "normalization_context"={"groups"={"users:read"}},  
+ *          "path"= "/admin/users/{id}"  
  *      },
- *      "getUser"={
+ *      "editUser"={
  *          "method"= "PUT",
- *          "path"= "/admin/users/{id}",
- *          "normalization_context"={"groups"={"userrs:write"}},   
+ *          "path"= "/admin/users/{id}"  
  *      },
  * }
  * 
@@ -52,7 +46,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"user:read","users:read","userrs:write"})
+     * @Groups({"users:read"})
      */
     private $id;
 
@@ -103,7 +97,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="Le nom ne doit pas être vide")
      * @Assert\Length(
-     *      min = 3,
+     *      min = 2,
      *      max = 50,
      *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"

@@ -13,48 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(
- * collectionOperations={
- *      "getAdmin"={
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="ACCES REFUSE",
- *              "method"="GET",
- *              "path"="/admin/profils",
- *              "normalization_context"={"groups"={"profil:read"}},   
- *       },
- *      "getAdminProfil"={
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="ACCES REFUSE",
- *              "method"="GET",
- *              "path"="/admin/profils/{id}/users", 
- *              "normalization_context"={"groups"={"profils:read"}},    
- *       },
- *       "createProfil"={
- *              "security"="is_granted('ROLE_ADMIN')",
- *              "security_message"="ACCES REFUSE",
- *              "method"="POST",
- *              "path"="/admin/profils", 
- *              "normalization_context"={"groups"={"profils:write"}},    
- *       },
- * },
- * itemOperations={
- *      "getprofilId"={
- *          "method"= "GET",
- *          "path"= "/admin/profils/{id}", 
- *          "normalization_context"={"groups"={"profile:read"}},  
- *      },
- *      "modifprofilId"={
- *          "method"= "PUT",
- *          "path"= "/admin/profils/{id}", 
- *          "normalization_context"={"groups"={"profile:write"}},  
- *      },
- *     "suprimerprofilId"={
- *          "method"= "DELETE",
- *          "path"= "/admin/profils/{id}", 
- *           
- *      },
- * }
- * )
+ * @ApiResource()
  * @ORM\Entity(repositoryClass=ProfilRepository::class)
  */
 class Profil
@@ -63,26 +22,16 @@ class Profil
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     *  @Groups({"profil:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le libelle ne doit pas être vide")
-     * @Assert\Length(
-     *      min = 5,
-     *      max = 255,
-     *      minMessage = "Le libelle doit avoir au moins {{ limit }} charactères",
-     *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
-     * )
-     * @Groups({"user:read","users:read","userrs:write","profil:read","profils:read","profils:write","profile:read"})
      */
     private $libelle;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
-     *  @Groups({"profils:read"})
      */
     private $users;
 

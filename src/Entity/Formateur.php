@@ -29,7 +29,7 @@ class Formateur
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(message="Le nom ne doit pas être vide")
      * @Assert\Length(
-     *      min = 3,
+     *      min = 2,
      *      max = 50,
      *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"
