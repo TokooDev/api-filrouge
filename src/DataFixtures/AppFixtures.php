@@ -25,7 +25,7 @@ class AppFixtures extends Fixture
             $profil->setLibelle($faker->unique()->randomElement(['Admin','Formateur','CM','Apprenant']));
             $manager->persist($profil);
             $user = new User();
-            $harsh = $this->encoder->encodePassword($user, 'sonatel');
+            $harsh = $this->encoder->encodePassword($user, 'passer');
             $user->setProfil($profil);
             $user->setUsername($faker->unique()->randomElement(['babacar','aminata','Oumar','Laye']));
             $user->setPassword($faker->randomElement([ $harsh, $harsh, $harsh, $harsh]));
@@ -35,7 +35,6 @@ class AppFixtures extends Fixture
             $user->setTel($faker->randomElement(['778458574','778548596','774859652','777777777']));
             $user->setArchived($faker->randomElement(['true','false','true','false']));
             $user->setGenre($faker->randomElement(['F','M','F','F']));
-            $user->setAvatar('avatar');
             $manager->persist($user);
         }
 
