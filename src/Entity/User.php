@@ -26,7 +26,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="POST",
  *              "route_name"="create",
  *              "path"="/admin/users"    
- *       }
+ *       },
+ *       "getUsers" = {
+ *              "method"= "GET",
+ *              "path" = "/admin/users",
+ *              "route_name"= "userList"   
+ *       },
  * },
  * itemOperations={
  *      "getUserById"={
@@ -141,6 +146,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="Vueillez donner le genre de l'utilisateur")
+     * @Assert\Length(
+     *      min = 1,
+     *      max = 6,
+     *      minMessage = "Le genre de telephone doit avoir au moins {{ limit }} charactères",
+     *      maxMessage = "Le genre de telephone ne doit pas dépasser {{ limit }} charactères"
+     * )
      * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $genre;
@@ -159,7 +171,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="blob", nullable=true)
-     * @Assert\NotBlank(message="L'avatar ne doit pas être vide")
      * 
      */
     private $avatar;
