@@ -134,10 +134,16 @@ class Promo
      */
     private $archived;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="promos")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
         $this->apprenants = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -269,6 +275,34 @@ class Promo
     public function setArchived(?bool $archived): self
     {
         $this->archived = $archived;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removePromo($this);
+        }
 
         return $this;
     }

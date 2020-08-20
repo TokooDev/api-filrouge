@@ -103,9 +103,21 @@ class Apprenant
      */
     private $profildesortie;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Livrable::class, mappedBy="apprenant")
+     */
+    private $livrables;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, inversedBy="apprenants")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->groupe = new ArrayCollection();
+        $this->livrables = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +195,60 @@ class Apprenant
     public function setProfildesortie(?ProfilDeSortie $profildesortie): self
     {
         $this->profildesortie = $profildesortie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Livrable[]
+     */
+    public function getLivrables(): Collection
+    {
+        return $this->livrables;
+    }
+
+    public function addLivrable(Livrable $livrable): self
+    {
+        if (!$this->livrables->contains($livrable)) {
+            $this->livrables[] = $livrable;
+            $livrable->addApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivrable(Livrable $livrable): self
+    {
+        if ($this->livrables->contains($livrable)) {
+            $this->livrables->removeElement($livrable);
+            $livrable->removeApprenant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+        }
 
         return $this;
     }
