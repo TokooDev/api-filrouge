@@ -2,15 +2,16 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\FormateurRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Length;
+use App\Repository\FormateurRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -24,118 +25,31 @@ class Formateur
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="Le nom ne doit pas être vide")
-     * @Assert\Length(
-     *      min = 2,
-     *      max = 50,
-     *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
-     *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"
-     * )
-     */
-    private $nom;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="Le prénom ne doit pas être vide")
-     * @Assert\Length(
-     *      min = 3,
-     *      max = 80,
-     *      minMessage = "Le prénom doit avoir au moins {{ limit }} charactères",
-     *      maxMessage = "Le prénom ne doit pas dépasser {{ limit }} charactères"
-     * )
-     */
-    private $prenom;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="L'email ne doit pas être vide")
-     * @Assert\Length(
-     *      
-     *      max = 255,
-     *      maxMessage = "L'email ne doit pas dépasser {{ limit }} charactères"
-     * )
-     * @Assert\Email(
-     *     message = "L'adresse '{{ value }}' n'est pas un email valide."
-     * )
-     */
-    private $email;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="Le numero ne doit pas être vide")
-     * @Assert\Length(
-     *      min = 9,
-     *      max = 30,
-     *      minMessage = "Le numro de telephone doit avoir au moins {{ limit }} charactères",
-     *      maxMessage = "Le numero de telephone ne doit pas dépasser {{ limit }} charactères"
-     * )
-     */
-    private $tel;
-
     /**
      * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="formateurs")
      */
     private $groupe;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, inversedBy="formateur", cascade={"persist", "remove"})
+     * @Groups({"briefsofapprenantofpromo:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="formateurs")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->groupe = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(?string $nom): self
-    {
-        $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(?string $prenom): self
-    {
-        $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getTel(): ?string
-    {
-        return $this->tel;
-    }
-
-    public function setTel(?string $tel): self
-    {
-        $this->tel = $tel;
-
-        return $this;
     }
 
     /**
@@ -159,6 +73,46 @@ class Formateur
     {
         if ($this->groupe->contains($groupe)) {
             $this->groupe->removeElement($groupe);
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addFormateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeFormateur($this);
         }
 
         return $this;

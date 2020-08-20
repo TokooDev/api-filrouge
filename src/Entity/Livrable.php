@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\LivrableRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LivrableRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -23,6 +24,7 @@ class Livrable
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $libelle;
 

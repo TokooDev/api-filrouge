@@ -51,7 +51,29 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "method"= "PUT",
  *          "path" = "/admin/promos/{id}/archive",
  *          "controller" = ArchivagePromoController::class   
- *       } 
+ *       },
+ *       
+ *      "getBriefsOfPromo"={
+ *              "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *              "security_message"="ACCES REFUSE",
+ *              "method"="GET",
+ *              "path"="/formateurs/promos/{id}/briefs",
+ *              "normalization_context"={"groups"={"briefsofpromo:read"}},
+ *          },
+ *       "getBriefsOfApprenantsOfPromo"={
+ *              "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Apprenant') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *              "security_message"="ACCES REFUSE",
+ *              "method"="GET",
+ *              "path"="/apprenants/promos/{id}/briefs",
+ *              "normalization_context"={"groups"={"briefsofapprenantofpromo:read"}},
+ *          },
+ *          "getBriefsOfGroupeOfPromo"={
+ *              "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *              "security_message"="ACCES REFUSE",
+ *              "method"="GET",
+ *              "path"="/formateurs/promos/{id}/groupes/{idG}/briefs",
+ *              "normalization_context"={"groups"={"briefsofgroupeofpromo:read"}},
+ *          }
  * 
  * },
  * )
@@ -89,7 +111,7 @@ class Promo
      *      minMessage = "Le titre ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le titre ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"promo:read"})
+     * @Groups({"promo:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $titre;
 
@@ -124,7 +146,7 @@ class Promo
 
     /**
      * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promo")
-     * @Groups({"promo:read"})
+     * @Groups({"promo:read","briefsofgroupeofpromo:read"})
      */
     private $groupes;
 
@@ -136,14 +158,20 @@ class Promo
 
     /**
      * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="promos")
+     * @Groups({"briefsofpromo:read","briefsofapprenantofpromo:read"})
      */
     private $briefs;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Referentiel::class, inversedBy="promos")
+     */
+    private $referentiel;
 
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
-        $this->apprenants = new ArrayCollection();
         $this->briefs = new ArrayCollection();
+        $this->referentiel = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -306,4 +334,31 @@ class Promo
 
         return $this;
     }
+
+    /**
+     * @return Collection|Referentiel[]
+     */
+    public function getReferentiel(): Collection
+    {
+        return $this->referentiel;
+    }
+
+    public function addReferentiel(Referentiel $referentiel): self
+    {
+        if (!$this->referentiel->contains($referentiel)) {
+            $this->referentiel[] = $referentiel;
+        }
+
+        return $this;
+    }
+
+    public function removeReferentiel(Referentiel $referentiel): self
+    {
+        if ($this->referentiel->contains($referentiel)) {
+            $this->referentiel->removeElement($referentiel);
+        }
+
+        return $this;
+    }
+
 }

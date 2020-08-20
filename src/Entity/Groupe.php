@@ -76,13 +76,13 @@ class Groupe
      *      minMessage = "Le libelle ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"appreants:read","groupe:read","promo:read"})
+     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","appreants:read","groupe:read","briefsofpromo:read","promo:read","briefs:read"})
      */
     private $libelle;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="groupe")
-     * @Groups({"groupe:read","promo:read"})
+     * @Groups({"groupe:read","promo:read","briefsofpromo:read","briefsofapprenantofpromo:read"})
      */
     private $apprenants;
 
@@ -106,10 +106,17 @@ class Groupe
      */
     private $dateCreation;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="groupes")
+     * @Groups({"briefsofgroupeofpromo:read"})
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->apprenants = new ArrayCollection();
         $this->formateurs = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,6 +223,34 @@ class Groupe
     public function setDateCreation(\DateTimeInterface $dateCreation): self
     {
         $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeGroupe($this);
+        }
 
         return $this;
     }

@@ -71,7 +71,7 @@ class User implements UserInterface
      *      minMessage = "Le username ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le username ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"users:read","appreants:read","profil:read"})
+     * @Groups({"users:read","appreants:read","profil:read","briefsofpromo:read"})
      */
     private $username;
 
@@ -99,7 +99,7 @@ class User implements UserInterface
      *      minMessage = "Le prénom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le prénom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
+     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $prenom;
 
@@ -112,7 +112,7 @@ class User implements UserInterface
      *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
+     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $nom;
 
@@ -127,7 +127,7 @@ class User implements UserInterface
      * @Assert\Email(
      *     message = "L'adresse '{{ value }}' n'est pas un email valide."
      * )
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","promo:read"})
+     * @Groups({"briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","promo:read","briefsofpromo:read"})
      */
     private $email;
 
@@ -140,7 +140,7 @@ class User implements UserInterface
      *      minMessage = "Le numro de telephone doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le numero de telephone ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","promo:read"})
+     * @Groups({"briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","promo:read","briefsofpromo:read"})
      */
     private $tel;
 
@@ -158,7 +158,7 @@ class User implements UserInterface
      *      minMessage = "Le genre de telephone doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le genre de telephone ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
+     * @Groups({"briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","promo:read","briefsofpromo:read"})
      */
     private $genre;
 
@@ -176,6 +176,11 @@ class User implements UserInterface
 
  
     private $avatar;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Formateur::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $formateur;
 
     public function getId(): ?int
     {
@@ -359,6 +364,24 @@ class User implements UserInterface
     public function setAvatar($avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getFormateur(): ?Formateur
+    {
+        return $this->formateur;
+    }
+
+    public function setFormateur(?Formateur $formateur): self
+    {
+        $this->formateur = $formateur;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = null === $formateur ? null : $this;
+        if ($formateur->getUser() !== $newUser) {
+            $formateur->setUser($newUser);
+        }
 
         return $this;
     }

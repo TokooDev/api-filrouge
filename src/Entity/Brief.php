@@ -2,14 +2,25 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\BriefRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BriefRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * normalizationContext ={"groups"={"briefs:read"}},
+ * collectionOperations = {
+ *      "getBriefs" = {
+ *              "security" = "is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *              "security_message" = "Accès refusé!",
+ *              "method"= "GET",
+ *              "path" = "/formateurs/briefs"  
+ *       }
+ * },
+ * )
  * @ORM\Entity(repositoryClass=BriefRepository::class)
  */
 class Brief
@@ -18,16 +29,19 @@ class Brief
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"briefs:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:read"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $titre;
 
@@ -35,21 +49,25 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:read"})
      */
     private $contexte;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:read"})
      */
     private $modalitePedagogique;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $ressource;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:read"})
      */
     private $critersPerformance;
 
@@ -57,6 +75,7 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:read"})
      */
     private $etat;
 
@@ -67,6 +86,7 @@ class Brief
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"briefs:read"})
      */
     private $modaliteDevaluation;
 
@@ -77,19 +97,48 @@ class Brief
 
     /**
      * @ORM\OneToMany(targetEntity=Livrable::class, mappedBy="brief")
+     * @Groups({"briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $Livrables;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="briefs")
+     * 
      */
     private $apprenants;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Competence::class, inversedBy="briefs")
+     * @Groups({"briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     */
+    private $competences;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="briefs")
+     * @Groups({"briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
+     */
+    private $referentiel;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="briefs")
+     * @Groups({"briefsofpromo:read","briefsofapprenantofpromo:read"})
+     */
+    private $groupes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="briefs")
+     * @Groups({"briefsofapprenantofpromo:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     */
+    private $formateurs;
 
     public function __construct()
     {
         $this->promos = new ArrayCollection();
         $this->Livrables = new ArrayCollection();
         $this->apprenants = new ArrayCollection();
+        $this->competences = new ArrayCollection();
+        $this->groupes = new ArrayCollection();
+        $this->formateurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -288,6 +337,96 @@ class Brief
         if ($this->apprenants->contains($apprenant)) {
             $this->apprenants->removeElement($apprenant);
             $apprenant->removeBrief($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Competence[]
+     */
+    public function getCompetences(): Collection
+    {
+        return $this->competences;
+    }
+
+    public function addCompetence(Competence $competence): self
+    {
+        if (!$this->competences->contains($competence)) {
+            $this->competences[] = $competence;
+        }
+
+        return $this;
+    }
+
+    public function removeCompetence(Competence $competence): self
+    {
+        if ($this->competences->contains($competence)) {
+            $this->competences->removeElement($competence);
+        }
+
+        return $this;
+    }
+
+    public function getReferentiel(): ?Referentiel
+    {
+        return $this->referentiel;
+    }
+
+    public function setReferentiel(?Referentiel $referentiel): self
+    {
+        $this->referentiel = $referentiel;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Groupe[]
+     */
+    public function getGroupes(): Collection
+    {
+        return $this->groupes;
+    }
+
+    public function addGroupe(Groupe $groupe): self
+    {
+        if (!$this->groupes->contains($groupe)) {
+            $this->groupes[] = $groupe;
+        }
+
+        return $this;
+    }
+
+    public function removeGroupe(Groupe $groupe): self
+    {
+        if ($this->groupes->contains($groupe)) {
+            $this->groupes->removeElement($groupe);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Formateur[]
+     */
+    public function getFormateurs(): Collection
+    {
+        return $this->formateurs;
+    }
+
+    public function addFormateur(Formateur $formateur): self
+    {
+        if (!$this->formateurs->contains($formateur)) {
+            $this->formateurs[] = $formateur;
+        }
+
+        return $this;
+    }
+
+    public function removeFormateur(Formateur $formateur): self
+    {
+        if ($this->formateurs->contains($formateur)) {
+            $this->formateurs->removeElement($formateur);
         }
 
         return $this;

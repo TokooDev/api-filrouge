@@ -76,7 +76,7 @@ class Referentiel
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefsofpromo:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $libelle;
 
@@ -110,9 +110,21 @@ class Referentiel
      */
     private $GroupeDeCompetences;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Brief::class, mappedBy="referentiel")
+     */
+    private $briefs;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Promo::class, mappedBy="referentiel")
+     */
+    private $promos;
+
     public function __construct()
     {
         $this->GroupeDeCompetences = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
+        $this->promos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -201,6 +213,65 @@ class Referentiel
     {
         if ($this->GroupeDeCompetences->contains($groupeDeCompetence)) {
             $this->GroupeDeCompetences->removeElement($groupeDeCompetence);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->setReferentiel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            // set the owning side to null (unless already changed)
+            if ($brief->getReferentiel() === $this) {
+                $brief->setReferentiel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Promo[]
+     */
+    public function getPromos(): Collection
+    {
+        return $this->promos;
+    }
+
+    public function addPromo(Promo $promo): self
+    {
+        if (!$this->promos->contains($promo)) {
+            $this->promos[] = $promo;
+            $promo->addReferentiel($this);
+        }
+
+        return $this;
+    }
+
+    public function removePromo(Promo $promo): self
+    {
+        if ($this->promos->contains($promo)) {
+            $this->promos->removeElement($promo);
+            $promo->removeReferentiel($this);
         }
 
         return $this;

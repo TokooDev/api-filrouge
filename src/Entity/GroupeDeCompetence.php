@@ -74,7 +74,7 @@ class GroupeDeCompetence
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"briefsofpromo:read","briefs:read","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      * 
      */
     private $libelle;

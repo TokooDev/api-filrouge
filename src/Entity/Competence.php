@@ -61,7 +61,7 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     *@Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     *@Groups({"briefsofgroupeofpromo:read","briefsofpromo:read","promo:read","briefs:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
      */
     private $libelle;
 
@@ -73,19 +73,26 @@ class Competence
 
     /**
      * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, inversedBy="competences")
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefs:read","promo:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      */
     private $niveauDevaluation;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeDeCompetence::class, inversedBy="competences")
+     * @Groups({"briefs:read","briefsofpromo:read"})
      */
     private $groupeDeCompetence;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="competences")
+     */
+    private $briefs;
 
     public function __construct()
     {
         $this->niveauDevaluation = new ArrayCollection();
         $this->groupeDeCompetence = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,6 +171,34 @@ class Competence
     {
         if ($this->groupeDeCompetence->contains($groupeDeCompetence)) {
             $this->groupeDeCompetence->removeElement($groupeDeCompetence);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addCompetence($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeCompetence($this);
         }
 
         return $this;

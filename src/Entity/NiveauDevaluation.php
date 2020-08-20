@@ -39,6 +39,12 @@ class NiveauDevaluation
      */
     private $competences;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefs:read","promo:read"})
+     */
+    private $libelle;
+
     public function __construct()
     {
         $this->competences = new ArrayCollection();
@@ -97,6 +103,18 @@ class NiveauDevaluation
             $this->competences->removeElement($competence);
             $competence->removeNiveauDevaluation($this);
         }
+
+        return $this;
+    }
+
+    public function getLibelle(): ?string
+    {
+        return $this->libelle;
+    }
+
+    public function setLibelle(?string $libelle): self
+    {
+        $this->libelle = $libelle;
 
         return $this;
     }
