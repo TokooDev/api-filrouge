@@ -106,10 +106,16 @@ class Groupe
      */
     private $dateCreation;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=LivrablePartiel::class, mappedBy="groupes")
+     */
+    private $livrablePartiels;
+
     public function __construct()
     {
         $this->apprenants = new ArrayCollection();
         $this->formateurs = new ArrayCollection();
+        $this->livrablePartiels = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,6 +222,34 @@ class Groupe
     public function setDateCreation(\DateTimeInterface $dateCreation): self
     {
         $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LivrablePartiel[]
+     */
+    public function getLivrablePartiels(): Collection
+    {
+        return $this->livrablePartiels;
+    }
+
+    public function addLivrablePartiel(LivrablePartiel $livrablePartiel): self
+    {
+        if (!$this->livrablePartiels->contains($livrablePartiel)) {
+            $this->livrablePartiels[] = $livrablePartiel;
+            $livrablePartiel->addGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivrablePartiel(LivrablePartiel $livrablePartiel): self
+    {
+        if ($this->livrablePartiels->contains($livrablePartiel)) {
+            $this->livrablePartiels->removeElement($livrablePartiel);
+            $livrablePartiel->removeGroupe($this);
+        }
 
         return $this;
     }

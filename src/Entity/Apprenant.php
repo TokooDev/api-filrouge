@@ -103,9 +103,27 @@ class Apprenant
      */
     private $profildesortie;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=LivrablePartiel::class, mappedBy="apprenants")
+     */
+    private $livrablePartiels;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LivrableDunApprenant::class, mappedBy="apprenant")
+     */
+    private $livrablesDunApprenant;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LivrablePartielDunApprenant::class, mappedBy="apprenant")
+     */
+    private $LivrablePartielDunApprenant;
+
     public function __construct()
     {
         $this->groupe = new ArrayCollection();
+        $this->livrablePartiels = new ArrayCollection();
+        $this->livrablesDunApprenant = new ArrayCollection();
+        $this->LivrablePartielDunApprenant = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +201,96 @@ class Apprenant
     public function setProfildesortie(?ProfilDeSortie $profildesortie): self
     {
         $this->profildesortie = $profildesortie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LivrablePartiel[]
+     */
+    public function getLivrablePartiels(): Collection
+    {
+        return $this->livrablePartiels;
+    }
+
+    public function addLivrablePartiel(LivrablePartiel $livrablePartiel): self
+    {
+        if (!$this->livrablePartiels->contains($livrablePartiel)) {
+            $this->livrablePartiels[] = $livrablePartiel;
+            $livrablePartiel->addApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivrablePartiel(LivrablePartiel $livrablePartiel): self
+    {
+        if ($this->livrablePartiels->contains($livrablePartiel)) {
+            $this->livrablePartiels->removeElement($livrablePartiel);
+            $livrablePartiel->removeApprenant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LivrableDunApprenant[]
+     */
+    public function getLivrablesDunApprenant(): Collection
+    {
+        return $this->livrablesDunApprenant;
+    }
+
+    public function addLivrablesDunApprenant(LivrableDunApprenant $livrablesDunApprenant): self
+    {
+        if (!$this->livrablesDunApprenant->contains($livrablesDunApprenant)) {
+            $this->livrablesDunApprenant[] = $livrablesDunApprenant;
+            $livrablesDunApprenant->setApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivrablesDunApprenant(LivrableDunApprenant $livrablesDunApprenant): self
+    {
+        if ($this->livrablesDunApprenant->contains($livrablesDunApprenant)) {
+            $this->livrablesDunApprenant->removeElement($livrablesDunApprenant);
+            // set the owning side to null (unless already changed)
+            if ($livrablesDunApprenant->getApprenant() === $this) {
+                $livrablesDunApprenant->setApprenant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LivrablePartielDunApprenant[]
+     */
+    public function getLivrablePartielDunApprenant(): Collection
+    {
+        return $this->LivrablePartielDunApprenant;
+    }
+
+    public function addLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
+    {
+        if (!$this->LivrablePartielDunApprenant->contains($livrablePartielDunApprenant)) {
+            $this->LivrablePartielDunApprenant[] = $livrablePartielDunApprenant;
+            $livrablePartielDunApprenant->setApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
+    {
+        if ($this->LivrablePartielDunApprenant->contains($livrablePartielDunApprenant)) {
+            $this->LivrablePartielDunApprenant->removeElement($livrablePartielDunApprenant);
+            // set the owning side to null (unless already changed)
+            if ($livrablePartielDunApprenant->getApprenant() === $this) {
+                $livrablePartielDunApprenant->setApprenant(null);
+            }
+        }
 
         return $this;
     }
