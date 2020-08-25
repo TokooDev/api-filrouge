@@ -99,7 +99,7 @@ class User implements UserInterface
      *      minMessage = "Le prénom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le prénom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
+     * @Groups({"briefsactiveofformateur:read","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $prenom;
 
@@ -112,7 +112,7 @@ class User implements UserInterface
      *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
+     * @Groups({"briefsactiveofformateur:read","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $nom;
 

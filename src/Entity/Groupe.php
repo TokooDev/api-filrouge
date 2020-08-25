@@ -82,7 +82,7 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="groupe")
-     * @Groups({"groupe:read","promo:read","briefsofpromo:read","briefsofapprenantofpromo:read"})
+     * @Groups({"briefsofgroupeofpromo:read","groupe:read","promo:read","briefsofpromo:read","briefsofapprenantofpromo:read"})
      */
     private $apprenants;
 
@@ -108,7 +108,6 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="groupes")
-     * @Groups({"briefsofgroupeofpromo:read"})
      */
     private $briefs;
 

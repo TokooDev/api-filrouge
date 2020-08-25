@@ -47,4 +47,35 @@ class BriefRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findBriefsByPromoAndGroupe($idP, $idG)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT b
+            FROM App\Entity\Brief b
+            JOIN b.promos p
+            JOIN b.groupes g
+            WHERE p.id = :idP
+            AND g.id = :idG
+            '
+        )->setParameter('idP', $idP)
+         ->setParameter('idG', $idG);
+
+        return $query->getResult();
+    }
+
+    public function findBriefsBrouillonsOfFormateur($id)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT b
+            FROM App\Entity\Brief b
+            JOIN b.formateurs f
+            WHERE f.id = :id
+            '
+        )->setParameter('id', $id);
+
+        return $query->getResult();
+    }
 }

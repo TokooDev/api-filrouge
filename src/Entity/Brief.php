@@ -18,7 +18,23 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "security_message" = "Accès refusé!",
  *              "method"= "GET",
  *              "path" = "/formateurs/briefs"  
- *       }
+ *       },
+ * 
+ *       "getBriefsOfGroupeOfPromo"={
+ *              "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *              "security_message"="ACCES REFUSE",
+ *              "method"="GET",
+ *              "path"="/formateurs/promos/{idP}/groupes/{idG}/briefs",
+ *              "normalization_context"={"groups"={"briefsofgroupeofpromo:read"}},
+ *        },
+ * 
+ *        "getBriefsBrouillonsOfFormateur"={
+ *              "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *              "security_message"="ACCES REFUSE",
+ *              "method"="GET",
+ *              "path"="/formateurs/{id}/briefs/brouillons",
+ *              "normalization_context"={"groups"={"briefsbrouillonofformateur:read"}},
+ *        }
  * },
  * )
  * @ORM\Entity(repositoryClass=BriefRepository::class)
@@ -41,7 +57,7 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsbrouillonofformateur:read","briefs:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $titre;
 
@@ -61,7 +77,7 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $ressource;
 
@@ -92,12 +108,13 @@ class Brief
 
     /**
      * @ORM\ManyToMany(targetEntity=Promo::class, inversedBy="briefs")
+     * @Groups({"briefsofgroupeofpromo:read"})
      */
     private $promos;
 
     /**
      * @ORM\OneToMany(targetEntity=Livrable::class, mappedBy="brief")
-     * @Groups({"briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $Livrables;
 
@@ -109,7 +126,7 @@ class Brief
 
     /**
      * @ORM\ManyToMany(targetEntity=Competence::class, inversedBy="briefs")
-     * @Groups({"briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $competences;
 
@@ -121,7 +138,7 @@ class Brief
 
     /**
      * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="briefs")
-     * @Groups({"briefsofpromo:read","briefsofapprenantofpromo:read"})
+     * @Groups({"briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $groupes;
 
@@ -130,6 +147,15 @@ class Brief
      * @Groups({"briefsofapprenantofpromo:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $formateurs;
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $valide;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $brouillon;
 
     public function __construct()
     {
@@ -428,6 +454,30 @@ class Brief
         if ($this->formateurs->contains($formateur)) {
             $this->formateurs->removeElement($formateur);
         }
+
+        return $this;
+    }
+
+    public function getValide(): ?bool
+    {
+        return $this->valide;
+    }
+
+    public function setValide(?bool $valide): self
+    {
+        $this->valide = $valide;
+
+        return $this;
+    }
+
+    public function getBrouillon(): ?bool
+    {
+        return $this->brouillon;
+    }
+
+    public function setBrouillon(?bool $brouillon): self
+    {
+        $this->brouillon = $brouillon;
 
         return $this;
     }

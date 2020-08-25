@@ -72,13 +72,13 @@ class Apprenant
      *      minMessage = "Le statut ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le statut ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"briefsofapprenantofpromo:read","users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
+     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
+     * @Groups({"briefsofgroupeofpromo:read","users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $niveau;
 
@@ -86,7 +86,7 @@ class Apprenant
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="apprenant", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      * @ApiSubresource
-     * @Groups({"briefsofapprenantofpromo:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
+     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $user;
 

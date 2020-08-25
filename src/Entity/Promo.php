@@ -67,13 +67,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "path"="/apprenants/promos/{id}/briefs",
  *              "normalization_context"={"groups"={"briefsofapprenantofpromo:read"}},
  *          },
- *          "getBriefsOfGroupeOfPromo"={
- *              "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
- *              "security_message"="ACCES REFUSE",
- *              "method"="GET",
- *              "path"="/formateurs/promos/{id}/groupes/{idG}/briefs",
- *              "normalization_context"={"groups"={"briefsofgroupeofpromo:read"}},
- *          }
+ *          
  * 
  * },
  * )
@@ -146,7 +140,7 @@ class Promo
 
     /**
      * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promo")
-     * @Groups({"promo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"promo:read"})
      */
     private $groupes;
 

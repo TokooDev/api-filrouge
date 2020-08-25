@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\BriefController;
 use App\Repository\FormateurRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -27,6 +28,7 @@ class Formateur
     private $id;
     /**
      * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="formateurs")
+     * 
      */
     private $groupe;
 
