@@ -28,13 +28,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "normalization_context"={"groups"={"briefsofgroupeofpromo:read"}},
  *        },
  * 
- *        "getBriefsBrouillonsOfFormateur"={
- *              "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
- *              "security_message"="ACCES REFUSE",
- *              "method"="GET",
- *              "path"="/formateurs/{id}/briefs/brouillons",
- *              "normalization_context"={"groups"={"briefsbrouillonofformateur:read"}},
- *        }
+ *        "getBriefsBrouillonsOfformateur" = {
+ *        "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *        "security_message"="ACCES REFUSE",
+ *        "method" = "GET",
+ *        "path" = "/formateurs/{id}/briefs/brouillons",
+ *        "normalization_context"={"groups"={"briefsbrouillonsofformateur:read"}},
+ *        },
+ *        "getBriefsValidesOfformateur" = {
+ *        "security"="is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
+ *        "security_message"="ACCES REFUSE",
+ *        "method" = "GET",
+ *        "path" = "/formateurs/{id}/briefs/valide",
+ *        "normalization_context"={"groups"={"briefsvalidesofformateur:read"}},
+ *        },
  * },
  * )
  * @ORM\Entity(repositoryClass=BriefRepository::class)
@@ -57,7 +64,7 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefsbrouillonofformateur:read","briefs:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefs:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $titre;
 
@@ -77,7 +84,7 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $ressource;
 
@@ -114,7 +121,7 @@ class Brief
 
     /**
      * @ORM\OneToMany(targetEntity=Livrable::class, mappedBy="brief")
-     * @Groups({"briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $Livrables;
 
@@ -126,7 +133,7 @@ class Brief
 
     /**
      * @ORM\ManyToMany(targetEntity=Competence::class, inversedBy="briefs")
-     * @Groups({"briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $competences;
 
@@ -148,14 +155,9 @@ class Brief
      */
     private $formateurs;
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\ManyToOne(targetEntity=EtatBrief::class, inversedBy="briefs")
      */
-    private $valide;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $brouillon;
+    private $etatBrief;
 
     public function __construct()
     {
@@ -458,26 +460,14 @@ class Brief
         return $this;
     }
 
-    public function getValide(): ?bool
+    public function getEtatBrief(): ?EtatBrief
     {
-        return $this->valide;
+        return $this->etatBrief;
     }
 
-    public function setValide(?bool $valide): self
+    public function setEtatBrief(?EtatBrief $etatBrief): self
     {
-        $this->valide = $valide;
-
-        return $this;
-    }
-
-    public function getBrouillon(): ?bool
-    {
-        return $this->brouillon;
-    }
-
-    public function setBrouillon(?bool $brouillon): self
-    {
-        $this->brouillon = $brouillon;
+        $this->etatBrief = $etatBrief;
 
         return $this;
     }

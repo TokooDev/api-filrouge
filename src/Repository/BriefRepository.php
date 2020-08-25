@@ -64,18 +64,4 @@ class BriefRepository extends ServiceEntityRepository
 
         return $query->getResult();
     }
-
-    public function findBriefsBrouillonsOfFormateur($id)
-    {
-        $entityManager = $this->getEntityManager();
-        $query = $entityManager->createQuery(
-            'SELECT b
-            FROM App\Entity\Brief b
-            JOIN b.formateurs f
-            WHERE f.id = :id
-            '
-        )->setParameter('id', $id);
-
-        return $query->getResult();
-    }
 }

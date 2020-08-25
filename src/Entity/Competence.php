@@ -61,7 +61,7 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     *@Groups({"briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofpromo:read","promo:read","briefs:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     *@Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofpromo:read","promo:read","briefs:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
      */
     private $libelle;
 
@@ -73,7 +73,7 @@ class Competence
 
     /**
      * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, inversedBy="competences")
-     * @Groups({"briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefs:read","promo:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefs:read","promo:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
      */
     private $niveauDevaluation;
 

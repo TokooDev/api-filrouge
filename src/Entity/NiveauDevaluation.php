@@ -41,7 +41,7 @@ class NiveauDevaluation
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefs:read","promo:read"})
+     *  @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefs:read","promo:read"})
      */
     private $libelle;
 

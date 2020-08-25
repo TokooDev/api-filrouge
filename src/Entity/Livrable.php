@@ -24,7 +24,7 @@ class Livrable
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $libelle;
 
