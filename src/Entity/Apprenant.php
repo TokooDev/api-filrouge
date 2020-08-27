@@ -60,7 +60,8 @@ class Apprenant
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer")*
+     *@Groups({"collectionApprenant:read","Apprenant:read","livrablepartiel:read"})
      */
     private $id;
 
@@ -108,15 +109,32 @@ class Apprenant
      */
     private $livrablePartiels;
 
-    /**
-     * @ORM\OneToMany(targetEntity=LivrableDunApprenant::class, mappedBy="apprenant")
-     */
-    private $livrablesDunApprenant;
+   
 
     /**
      * @ORM\OneToMany(targetEntity=LivrablePartielDunApprenant::class, mappedBy="apprenant")
      */
     private $LivrablePartielDunApprenant;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="apprenants")
+     
+     */
+    private $promo;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="apprenants")
+     * @Groups({"stats:read","Apprenant:read"})
+     */
+    private $referentiel;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="apprenant")
+     * @Groups({"collectionApprenant:read","Apprenant:read"})
+     */
+    private $competencesValides;
+
+    
 
     public function __construct()
     {
@@ -124,6 +142,7 @@ class Apprenant
         $this->livrablePartiels = new ArrayCollection();
         $this->livrablesDunApprenant = new ArrayCollection();
         $this->LivrablePartielDunApprenant = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -233,37 +252,7 @@ class Apprenant
         return $this;
     }
 
-    /**
-     * @return Collection|LivrableDunApprenant[]
-     */
-    public function getLivrablesDunApprenant(): Collection
-    {
-        return $this->livrablesDunApprenant;
-    }
-
-    public function addLivrablesDunApprenant(LivrableDunApprenant $livrablesDunApprenant): self
-    {
-        if (!$this->livrablesDunApprenant->contains($livrablesDunApprenant)) {
-            $this->livrablesDunApprenant[] = $livrablesDunApprenant;
-            $livrablesDunApprenant->setApprenant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLivrablesDunApprenant(LivrableDunApprenant $livrablesDunApprenant): self
-    {
-        if ($this->livrablesDunApprenant->contains($livrablesDunApprenant)) {
-            $this->livrablesDunApprenant->removeElement($livrablesDunApprenant);
-            // set the owning side to null (unless already changed)
-            if ($livrablesDunApprenant->getApprenant() === $this) {
-                $livrablesDunApprenant->setApprenant(null);
-            }
-        }
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection|LivrablePartielDunApprenant[]
      */
@@ -294,4 +283,60 @@ class Apprenant
 
         return $this;
     }
+
+    public function getPromo(): ?Promo
+    {
+        return $this->promo;
+    }
+
+    public function setPromo(?Promo $promo): self
+    {
+        $this->promo = $promo;
+
+        return $this;
+    }
+
+    public function getReferentiel(): ?Referentiel
+    {
+        return $this->referentiel;
+    }
+
+    public function setReferentiel(?Referentiel $referentiel): self
+    {
+        $this->referentiel = $referentiel;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getApprenant() === $this) {
+                $competencesValide->setApprenant(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

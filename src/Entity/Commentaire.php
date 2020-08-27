@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\CommentaireRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CommentaireRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -21,18 +22,26 @@ class Commentaire
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"commentaires:read","commentaires:write"})
      */
     private $contenu;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Discussion::class, inversedBy="commentaires")
+     * @ORM\ManyToOne(targetEntity=Discussion::class, inversedBy="commentaire")
+     * @Groups({"commentaires:read","commentaires:write"})
      */
     private $discussion;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Formateur::class, inversedBy="commentaires")
+     * @ORM\Column(type="blob", nullable=true)
      */
-    private $formateur;
+    private $fichier;
+
+    /**
+     * @ORM\Column(type="date")
+     * @Groups({"commentaires:read","commentaires:write"})
+     */
+    private $heur;
 
     public function getId(): ?int
     {
@@ -51,6 +60,9 @@ class Commentaire
         return $this;
     }
 
+   
+
+  
     public function getDiscussion(): ?Discussion
     {
         return $this->discussion;
@@ -63,14 +75,26 @@ class Commentaire
         return $this;
     }
 
-    public function getFormateur(): ?Formateur
+    public function getFichier()
     {
-        return $this->formateur;
+        return $this->fichier;
     }
 
-    public function setFormateur(?Formateur $formateur): self
+    public function setFichier($fichier): self
     {
-        $this->formateur = $formateur;
+        $this->fichier = $fichier;
+
+        return $this;
+    }
+
+    public function getHeur(): ?\DateTimeInterface
+    {
+        return $this->heur;
+    }
+
+    public function setHeur(\DateTimeInterface $heur): self
+    {
+        $this->heur = $heur;
 
         return $this;
     }

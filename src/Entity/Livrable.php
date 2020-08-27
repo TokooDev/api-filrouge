@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\LivrableRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LivrableRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -28,6 +29,7 @@ class Livrable
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
      */
     private $dateDeCreation;
 
@@ -41,15 +43,17 @@ class Livrable
      */
     private $livrablePartiels;
 
+
     /**
-     * @ORM\OneToMany(targetEntity=LivrableDunApprenant::class, mappedBy="livrable")
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="livrable")
      */
-    private $LivrableDunApprenant;
+    private $briefs;
 
     public function __construct()
     {
         $this->livrablePartiels = new ArrayCollection();
         $this->LivrableDunApprenant = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -121,32 +125,31 @@ class Livrable
         return $this;
     }
 
+    
+
     /**
-     * @return Collection|LivrableDunApprenant[]
+     * @return Collection|Brief[]
      */
-    public function getLivrableDunApprenant(): Collection
+    public function getBriefs(): Collection
     {
-        return $this->LivrableDunApprenant;
+        return $this->briefs;
     }
 
-    public function addLivrableDunApprenant(LivrableDunApprenant $livrableDunApprenant): self
+    public function addBrief(Brief $brief): self
     {
-        if (!$this->LivrableDunApprenant->contains($livrableDunApprenant)) {
-            $this->LivrableDunApprenant[] = $livrableDunApprenant;
-            $livrableDunApprenant->setLivrable($this);
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addLivrable($this);
         }
 
         return $this;
     }
 
-    public function removeLivrableDunApprenant(LivrableDunApprenant $livrableDunApprenant): self
+    public function removeBrief(Brief $brief): self
     {
-        if ($this->LivrableDunApprenant->contains($livrableDunApprenant)) {
-            $this->LivrableDunApprenant->removeElement($livrableDunApprenant);
-            // set the owning side to null (unless already changed)
-            if ($livrableDunApprenant->getLivrable() === $this) {
-                $livrableDunApprenant->setLivrable(null);
-            }
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeLivrable($this);
         }
 
         return $this;

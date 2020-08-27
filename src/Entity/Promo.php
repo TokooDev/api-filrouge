@@ -63,7 +63,7 @@ class Promo
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"promo:read"})
+     * @Groups({"promo:read","apprenantscompetences:read","stats:read"})
      */
     private $id;
 
@@ -89,7 +89,7 @@ class Promo
      *      minMessage = "Le titre ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le titre ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"promo:read"})
+     * @Groups({"promo:read","collectionApprenant:read","Apprenant:read"})
      */
     private $titre;
 
@@ -134,10 +134,42 @@ class Promo
      */
     private $archived;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="promos")
+     */
+    private $briefs;
+
+    
+    /**
+     * @ORM\ManyToMany(targetEntity=Referentiel::class, inversedBy="promos")
+     *  @Groups({"apprenantscompetences:read"})
+     */
+    private $referentiel;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, inversedBy="promos")
+     */
+    private $Brief;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="promo")
+     */
+    private $apprenants;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="Promo")
+     */
+    private $competencesValides;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
+        $this->briefDunePromos = new ArrayCollection();
+        $this->referentiel = new ArrayCollection();
+        $this->Brief = new ArrayCollection();
         $this->apprenants = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -269,6 +301,132 @@ class Promo
     public function setArchived(?bool $archived): self
     {
         $this->archived = $archived;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removePromo($this);
+        }
+
+        return $this;
+    }
+
+   
+
+    /**
+     * @return Collection|Referentiel[]
+     */
+    public function getReferentiel(): Collection
+    {
+        return $this->referentiel;
+    }
+
+    public function addReferentiel(Referentiel $referentiel): self
+    {
+        if (!$this->referentiel->contains($referentiel)) {
+            $this->referentiel[] = $referentiel;
+        }
+
+        return $this;
+    }
+
+    public function removeReferentiel(Referentiel $referentiel): self
+    {
+        if ($this->referentiel->contains($referentiel)) {
+            $this->referentiel->removeElement($referentiel);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBrief(): Collection
+    {
+        return $this->Brief;
+    }
+
+    /**
+     * @return Collection|Apprenant[]
+     */
+    public function getApprenants(): Collection
+    {
+        return $this->apprenants;
+    }
+
+    public function addApprenant(Apprenant $apprenant): self
+    {
+        if (!$this->apprenants->contains($apprenant)) {
+            $this->apprenants[] = $apprenant;
+            $apprenant->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApprenant(Apprenant $apprenant): self
+    {
+        if ($this->apprenants->contains($apprenant)) {
+            $this->apprenants->removeElement($apprenant);
+            // set the owning side to null (unless already changed)
+            if ($apprenant->getPromo() === $this) {
+                $apprenant->setPromo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getPromo() === $this) {
+                $competencesValide->setPromo(null);
+            }
+        }
 
         return $this;
     }

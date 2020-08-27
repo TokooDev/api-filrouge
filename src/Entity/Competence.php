@@ -61,19 +61,19 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     *@Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     *@Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read","apprenantscompetences:read","collectionApprenant:read","Apprenant:read"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read","apprenantscompetences:read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, inversedBy="competences")
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read","apprenantscompetences:read","stats:read"})
      */
     private $niveauDevaluation;
 
@@ -82,10 +82,16 @@ class Competence
      */
     private $groupeDeCompetence;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="competences")
+     */
+    private $competencesValides;
+
     public function __construct()
     {
         $this->niveauDevaluation = new ArrayCollection();
         $this->groupeDeCompetence = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,6 +170,37 @@ class Competence
     {
         if ($this->groupeDeCompetence->contains($groupeDeCompetence)) {
             $this->groupeDeCompetence->removeElement($groupeDeCompetence);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setCompetences($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getCompetences() === $this) {
+                $competencesValide->setCompetences(null);
+            }
         }
 
         return $this;

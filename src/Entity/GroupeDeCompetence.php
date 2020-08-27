@@ -74,7 +74,7 @@ class GroupeDeCompetence
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write","Apprenant:read"})
      * 
      */
     private $libelle;
@@ -87,7 +87,7 @@ class GroupeDeCompetence
 
     /**
      * @ORM\ManyToMany(targetEntity=Competence::class, mappedBy="groupeDeCompetence")
-     *  @Groups({"groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","afficherGr:read","grpco:read"})
+     *  @Groups({"groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","afficherGr:read","grpco:read","apprenantscompetences:read","stats:read","Apprenant:read"})
      */
     private $competences;
 

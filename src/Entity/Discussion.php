@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\DiscussionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\DiscussionRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -23,23 +24,34 @@ class Discussion
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"commentaires:read","commentaires:write"})
      */
     private $libelle;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=LivrablePartielDunApprenant::class, mappedBy="discussion")
-     */
-    private $livrablePartielDunApprenants;
-
+    
     /**
      * @ORM\OneToMany(targetEntity=Commentaire::class, mappedBy="discussion")
+     *  @Groups({"commentaires:read","commentaires:write","commentaires:read"})
      */
     private $commentaires;
 
+    /**
+     * @ORM\OneToMany(targetEntity=DiscussionLivrablePartielDunApprenant::class, mappedBy="discussion")
+     */
+    private $discussionLivrablePartielDunApprenants;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=LivrablePartielDunApprenant::class, inversedBy="discussion")
+     */
+    private $livrablePartielDunApprenant;
+
+    
     public function __construct()
     {
-        $this->livrablePartielDunApprenants = new ArrayCollection();
+        
         $this->commentaires = new ArrayCollection();
+        $this->discussionLivrablePartielDunApprenants = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
@@ -59,33 +71,7 @@ class Discussion
         return $this;
     }
 
-    /**
-     * @return Collection|LivrablePartielDunApprenant[]
-     */
-    public function getLivrablePartielDunApprenants(): Collection
-    {
-        return $this->livrablePartielDunApprenants;
-    }
-
-    public function addLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
-    {
-        if (!$this->livrablePartielDunApprenants->contains($livrablePartielDunApprenant)) {
-            $this->livrablePartielDunApprenants[] = $livrablePartielDunApprenant;
-            $livrablePartielDunApprenant->addDiscussion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
-    {
-        if ($this->livrablePartielDunApprenants->contains($livrablePartielDunApprenant)) {
-            $this->livrablePartielDunApprenants->removeElement($livrablePartielDunApprenant);
-            $livrablePartielDunApprenant->removeDiscussion($this);
-        }
-
-        return $this;
-    }
+   
 
     /**
      * @return Collection|Commentaire[]
@@ -117,4 +103,49 @@ class Discussion
 
         return $this;
     }
+
+    /**
+     * @return Collection|DiscussionLivrablePartielDunApprenant[]
+     */
+    public function getDiscussionLivrablePartielDunApprenants(): Collection
+    {
+        return $this->discussionLivrablePartielDunApprenants;
+    }
+
+    public function addDiscussionLivrablePartielDunApprenant(DiscussionLivrablePartielDunApprenant $discussionLivrablePartielDunApprenant): self
+    {
+        if (!$this->discussionLivrablePartielDunApprenants->contains($discussionLivrablePartielDunApprenant)) {
+            $this->discussionLivrablePartielDunApprenants[] = $discussionLivrablePartielDunApprenant;
+            $discussionLivrablePartielDunApprenant->setDiscussion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDiscussionLivrablePartielDunApprenant(DiscussionLivrablePartielDunApprenant $discussionLivrablePartielDunApprenant): self
+    {
+        if ($this->discussionLivrablePartielDunApprenants->contains($discussionLivrablePartielDunApprenant)) {
+            $this->discussionLivrablePartielDunApprenants->removeElement($discussionLivrablePartielDunApprenant);
+            // set the owning side to null (unless already changed)
+            if ($discussionLivrablePartielDunApprenant->getDiscussion() === $this) {
+                $discussionLivrablePartielDunApprenant->setDiscussion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLivrablePartielDunApprenant(): ?LivrablePartielDunApprenant
+    {
+        return $this->livrablePartielDunApprenant;
+    }
+
+    public function setLivrablePartielDunApprenant(?LivrablePartielDunApprenant $livrablePartielDunApprenant): self
+    {
+        $this->livrablePartielDunApprenant = $livrablePartielDunApprenant;
+
+        return $this;
+    }
+
+    
 }

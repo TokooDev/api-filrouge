@@ -24,13 +24,13 @@ class NiveauDevaluation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read","apprenantscompetences:read","stats:read","Apprenant:read"})
      */
     private $Actions;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read","apprenantscompetences:read"})
      */
     private $Criteres;
 
@@ -39,9 +39,15 @@ class NiveauDevaluation
      */
     private $competences;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="niveauDevaluation")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->competences = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,6 +102,34 @@ class NiveauDevaluation
         if ($this->competences->contains($competence)) {
             $this->competences->removeElement($competence);
             $competence->removeNiveauDevaluation($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addNiveauDevaluation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeNiveauDevaluation($this);
         }
 
         return $this;

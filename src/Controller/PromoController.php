@@ -77,7 +77,8 @@ class PromoController extends AbstractController
                 ->setSubject('SONATEL ACADEMY')
                 ->setFrom('loaminata082@gmail.com')
                 ->setTo($user->getEmail())
-                ->setBody("Bonsoir Cher(e) candidat(e) à la sonatel Academy. \n Après les différentes étapes de sélection que tu as passé avec brio, nous t’informons que ta candidature a été retenue pour intégrer la promotion cette anné de la première école de codage gratuite du Sénégal.\n Rendez-vous sur www.sonatelacademy.sn et voici vos informations de connexion :\n Username: ".$user->getUsername()." \n Password : ".$password." ");
+                ->setBody("Bonsoir Cher(e) candidat(e) à 
+                la sonatel Academy. \n Après les différentes étapes de sélection que tu as passé avec brio, nous t’informons que ta candidature a été retenue pour intégrer la promotion cette anné de la première école de codage gratuite du Sénégal.\n Rendez-vous sur www.sonatelacademy.sn et voici vos informations de connexion :\n Username: ".$user->getUsername()." \n Password : ".$password." ");
             $mailer->send($message);
         }
         $promo->addGroupe($groupe);

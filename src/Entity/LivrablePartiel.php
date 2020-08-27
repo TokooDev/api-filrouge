@@ -2,14 +2,87 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LivrablePartielRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={
+ * 
+ *              "get_apprenants"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="formateurs/promo/{id}/referentiel/{idp}/competences" ,
+*                   "route_name"="get_apprenants",
+*                   "normalization_context"={"groups"={"collectionApprenant:read"}},
+*                },
+*                "get_apprenant"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="apprenant/{id}/promo/{id_promo}/referentiel/{id_ref}/competences" ,
+*                   "route_name"="get_apprenant",
+*                   "normalization_context"={"groups"={"Apprenant:read"}},
+*                },
+*               "brief_apprenant"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="apprenants/{id}/promo/{id_promo}/referentiel/{id_ref}/statistiques/briefs" ,
+*                   "route_name"="brief_apprenant",
+*                   "normalization_context"={"groups"={"Apprenant:read"}},
+*                },
+*               "statistiques"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="formateurs/promo/{id_promo}/referentiel/{id_ref}/statistiques/competences" ,
+*                   "route_name"="statistiques",
+*                   "normalization_context"={"groups"={"stats:read"}},
+*                   },
+*               "commentaires_livrablePartiel"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="formateurs/livrablepartiels/{id}/commentaires" ,
+*                   "route_name"="commentaires_livrablePartiel",
+*                   "normalization_context"={"groups"={"commentaireslivrablepartiel:read"}},
+*                   },
+*               "commentaires_livrablePartiel_post"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="POST",
+*                   "path"="formateurs/livrablepartiels/{id}/commentaires" ,
+*                   "route_name"="commentaires_livrablePartiel_post",
+*                   "normalization_context"={"groups"={"commentaireslivrablepartiel:write"}},
+*                   },
+*                   "ajout_livrablePartiel"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="POST",
+*                   "path"="formateurs/promo/{id_promo}/brief/{id_br}/livrablepartiels" ,
+*                   "route_name"="ajout_livrablePartiel",
+*                   
+*                   },
+*
+*},
+*itemOperations={
+*    "ajout_livrablePartiel"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="POST",
+*                   "path"="formateurs/promo/{id_promo}/brief/{id_br}/livrablepartiels" ,
+*                   "route_name"="ajout_livrablePartiel",
+*                   "normalization_context"={"groups"={"livrablepartiel:read"}},
+*                   },
+*
+ * }, 
+ * )
  * @ORM\Entity(repositoryClass=LivrablePartielRepository::class)
  */
 class LivrablePartiel
@@ -18,51 +91,61 @@ class LivrablePartiel
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *@Groups({"collectionApprenant:read",})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"collectionApprenant:read","livrablepartiel:write"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"livrablepartiel:read","livrablepartiel:write"})
      */
     private $Github;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"livrablepartiel:read","livrablepartiel:write"})
      */
     private $Trello;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"livrablepartiel:read","livrablepartiel:write"})
      */
     private $figma;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"livrablepartiel:read","livrablepartiel:write"})
      */
     private $deploiement;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"livrablepartiel:read","livrablepartiel:write"})
      */
     private $fichier;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"livrablepartiel:write"})
      */
     private $DateDeCreation;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"livrablepartiel:write"})
      */
     private $DateDeLivraison;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="livrablePartiels")
+     * @Groups({"collectionApprenant:read","stats:read","Apprenant:read","livrablepartiel:write"})
      */
     private $apprenants;
 
@@ -73,6 +156,7 @@ class LivrablePartiel
 
     /**
      * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="livrablePartiels")
+     *  @Groups({"livrablepartiel:write"})
      */
     private $groupes;
 
@@ -86,6 +170,8 @@ class LivrablePartiel
      */
     private $livrablePartielDunApprenant;
 
+    
+    
     public function __construct()
     {
         $this->apprenants = new ArrayCollection();
@@ -330,4 +416,5 @@ class LivrablePartiel
 
         return $this;
     }
+   
 }

@@ -63,7 +63,7 @@ class Groupe
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"groupe:read"})
+     * @Groups({"groupe:read","livrablepartiel:write"})
      */
     private $id;
 
@@ -76,13 +76,13 @@ class Groupe
      *      minMessage = "Le libelle ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"appreants:read","groupe:read","promo:read"})
+     * @Groups({"appreants:read","groupe:read","promo:read","livrablepartiel:write"})
      */
     private $libelle;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="groupe")
-     * @Groups({"groupe:read","promo:read"})
+     * @Groups({"groupe:read","promo:read","livrablepartiel:write"})
      */
     private $apprenants;
 
@@ -93,6 +93,7 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, mappedBy="groupe")
+     *  @Groups({"livrablepartiel:read"})
      */
     private $formateurs;
 
@@ -111,11 +112,17 @@ class Groupe
      */
     private $livrablePartiels;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="groupe")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->apprenants = new ArrayCollection();
         $this->formateurs = new ArrayCollection();
         $this->livrablePartiels = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -249,6 +256,34 @@ class Groupe
         if ($this->livrablePartiels->contains($livrablePartiel)) {
             $this->livrablePartiels->removeElement($livrablePartiel);
             $livrablePartiel->removeGroupe($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addGroupe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeGroupe($this);
         }
 
         return $this;
