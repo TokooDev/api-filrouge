@@ -76,7 +76,8 @@ class Groupe
      *      minMessage = "Le libelle ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"appreants:read","groupe:read","promo:read"})
+     * @Groups({"appreants:read","groupe:read","promo:read","brief:write","briefe:write"})
+     * 
      */
     private $libelle;
 
@@ -93,6 +94,7 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, mappedBy="groupe")
+     * 
      */
     private $formateurs;
 
@@ -105,6 +107,11 @@ class Groupe
      * @ORM\Column(type="date", nullable=true)
      */
     private $dateCreation;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $nom;
 
     public function __construct()
     {
@@ -216,6 +223,18 @@ class Groupe
     public function setDateCreation(\DateTimeInterface $dateCreation): self
     {
         $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(?string $nom): self
+    {
+        $this->nom = $nom;
 
         return $this;
     }

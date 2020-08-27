@@ -51,6 +51,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"admin"="Admin","cm"="CM","formateur"="Formateur", "apprenant"="Apprenant","user"="User"})
  */
 class User implements UserInterface
 {
@@ -60,7 +63,7 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      * @Groups({"users:read"})
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -99,7 +102,7 @@ class User implements UserInterface
      *      minMessage = "Le prénom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le prénom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
+     * @Groups({"brief:write","briefe:write","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $prenom;
 
@@ -112,7 +115,7 @@ class User implements UserInterface
      *      minMessage = "Le nom doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le nom ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
+     * @Groups({"brief:write","briefe:write","users:read","appreants:read","profil:read","profilsdesortie:read","groupe:read","promo:read"})
      */
     private $nom;
 
@@ -161,12 +164,6 @@ class User implements UserInterface
      * @Groups({"users:read","appreants:read","profil:read","profilsdesortie:read"})
      */
     private $genre;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Apprenant::class, mappedBy="user", cascade={"persist", "remove"})
-     */
-    private $apprenant;
-
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
      * @ApiSubresource
@@ -322,23 +319,8 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getApprenant(): ?Apprenant
-    {
-        return $this->apprenant;
-    }
-
-    public function setApprenant(Apprenant $apprenant): self
-    {
-        $this->apprenant = $apprenant;
-
-        // set the owning side of the relation if necessary
-        if ($apprenant->getUser() !== $this) {
-            $apprenant->setUser($this);
-        }
-
-        return $this;
-    }
-
+    
+   
     public function getProfil(): ?Profil
     {
         return $this->profil;

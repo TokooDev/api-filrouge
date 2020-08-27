@@ -61,13 +61,15 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     *@Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read","briefe:write"})
+     * 
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     * @Groups({"brief:write","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read","briefe:write"})
+     * 
      */
     private $description;
 

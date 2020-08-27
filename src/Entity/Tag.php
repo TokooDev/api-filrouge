@@ -3,42 +3,44 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\FormateurRepository;
+use App\Repository\TagRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
- * @ORM\Entity(repositoryClass=FormateurRepository::class)
+ * @ORM\Entity(repositoryClass=TagRepository::class)
  */
-class Formateur extends User
+class Tag
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    protected $id;
-    /**
-     * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="formateurs")
-     * 
-     */
-    private $groupe;
+    private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=Brief::class, mappedBy="formateurs")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"brief:write","briefe:write"})
+     */
+    private $libelle;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=GroupeTag::class, inversedBy="tags")
+     */
+    private $groupTag;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="tags")
      */
     private $briefs;
 
     public function __construct()
     {
-        $this->groupe = new ArrayCollection();
+        $this->groupTag = new ArrayCollection();
         $this->briefs = new ArrayCollection();
     }
 
@@ -47,27 +49,39 @@ class Formateur extends User
         return $this->id;
     }
 
-    /**
-     * @return Collection|Groupe[]
-     */
-    public function getGroupe(): Collection
+    public function getLibelle(): ?string
     {
-        return $this->groupe;
+        return $this->libelle;
     }
 
-    public function addGroupe(Groupe $groupe): self
+    public function setLibelle(?string $libelle): self
     {
-        if (!$this->groupe->contains($groupe)) {
-            $this->groupe[] = $groupe;
+        $this->libelle = $libelle;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GroupeTag[]
+     */
+    public function getGroupTag(): Collection
+    {
+        return $this->groupTag;
+    }
+
+    public function addGroupTag(GroupeTag $groupTag): self
+    {
+        if (!$this->groupTag->contains($groupTag)) {
+            $this->groupTag[] = $groupTag;
         }
 
         return $this;
     }
 
-    public function removeGroupe(Groupe $groupe): self
+    public function removeGroupTag(GroupeTag $groupTag): self
     {
-        if ($this->groupe->contains($groupe)) {
-            $this->groupe->removeElement($groupe);
+        if ($this->groupTag->contains($groupTag)) {
+            $this->groupTag->removeElement($groupTag);
         }
 
         return $this;
@@ -85,7 +99,7 @@ class Formateur extends User
     {
         if (!$this->briefs->contains($brief)) {
             $this->briefs[] = $brief;
-            $brief->setFormateurs($this);
+            $brief->addTag($this);
         }
 
         return $this;
@@ -95,10 +109,7 @@ class Formateur extends User
     {
         if ($this->briefs->contains($brief)) {
             $this->briefs->removeElement($brief);
-            // set the owning side to null (unless already changed)
-            if ($brief->getFormateurs() === $this) {
-                $brief->setFormateurs(null);
-            }
+            $brief->removeTag($this);
         }
 
         return $this;

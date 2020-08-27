@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LivrablePartielRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -26,21 +27,25 @@ class LivrablePartiel
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:write"})
      */
     private $lienGithub;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:write"})
      */
     private $lienFigma;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:write"})
      */
     private $lienTrello;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:write"})
      */
     private $deploiement;
 

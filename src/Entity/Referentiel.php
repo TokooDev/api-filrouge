@@ -76,31 +76,31 @@ class Referentiel
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"briefe:write","brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"briefe:write","brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $Presentation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"briefe:write","brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $Programme;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"briefe:write","brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $CriteresDevaluations;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"briefe:write","brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $CriteresDadmissions;
 
@@ -110,9 +110,15 @@ class Referentiel
      */
     private $GroupeDeCompetences;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Brief::class, mappedBy="referentiels")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->GroupeDeCompetences = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -201,6 +207,37 @@ class Referentiel
     {
         if ($this->GroupeDeCompetences->contains($groupeDeCompetence)) {
             $this->GroupeDeCompetences->removeElement($groupeDeCompetence);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->setReferentiels($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            // set the owning side to null (unless already changed)
+            if ($brief->getReferentiels() === $this) {
+                $brief->setReferentiels(null);
+            }
         }
 
         return $this;

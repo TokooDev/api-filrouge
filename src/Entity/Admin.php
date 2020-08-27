@@ -3,18 +3,14 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\CMRepository;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\AdminRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\Email;
 
 /**
  * @ApiResource()
- * @ORM\Entity(repositoryClass=CMRepository::class)
+ * @ORM\Entity(repositoryClass=AdminRepository::class)
  */
-class CM extends User
+class Admin extends User
 {
     /**
      * @ORM\Id()
@@ -23,11 +19,8 @@ class CM extends User
      */
     protected $id;
 
-
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    
 }
