@@ -76,31 +76,31 @@ class Referentiel
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefsofpromo:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefsofpromo:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $Presentation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $Programme;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $CriteresDevaluations;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $CriteresDadmissions;
 

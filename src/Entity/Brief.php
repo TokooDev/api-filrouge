@@ -13,6 +13,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  * normalizationContext ={"groups"={"briefs:read"}},
  * collectionOperations = {
+ *      "ajoutBrief"={
+ *              "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_Formateur')",
+ *              "security_message"="ACCES REFUSE",
+ *              "method"="POST",
+ *              "path"="/formateurs/briefs",
+ *              "normalization_context"={"groups"={"brief:write"}}, 
+ *          },
+ *          "dupliquerBrief"={
+ *              "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_Formateur')",
+ *              "security_message"="ACCES REFUSE",
+ *              "method"="POST",
+ *              "path"="/formateurs/briefs/{id}",
+ *              "normalization_context"={"groups"={"briefe:write"}}, 
+ *           }, 
  *      "getBriefs" = {
  *              "security" = "is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM')",
  *              "security_message" = "Accès refusé!",
@@ -54,34 +68,32 @@ class Brief
      * @ORM\Column(type="integer")
      * @Groups({"briefs:read"})
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:read"})
+     * @Groups({"brief:write","briefe:write","briefs:write","briefs:read"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefs:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"brief:write","briefe:write","briefs:write","briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefs:read","briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $titre;
-
-   
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:read"})
+     * @Groups({"brief:write","briefe:write","briefs:write","briefs:read"})
      */
     private $contexte;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:read"})
+     * @Groups({"brief:write","briefe:write","briefs:write","briefs:read"})
      */
     private $modalitePedagogique;
 
+   
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
@@ -90,44 +102,41 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:read"})
+     * @Groups({"brief:write","briefe:write","briefs:write","briefs:read"})
      */
     private $critersPerformance;
-
-    
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:read"})
+     * @Groups({"brief:write","briefe:write","briefs:write","briefs:read"})
      */
     private $etat;
-
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"brief:write","briefe:write","briefs:write"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"briefs:read"})
+     * @Groups({"brief:write","briefe:write","briefs:write","briefs:read"})
      */
     private $modaliteDevaluation;
-
     /**
      * @ORM\ManyToMany(targetEntity=Promo::class, inversedBy="briefs")
-     * @Groups({"briefsofgroupeofpromo:read"})
+     * @Groups({"brief:write","briefsofgroupeofpromo:read"})
      */
     private $promos;
 
     /**
      * @ORM\OneToMany(targetEntity=Livrable::class, mappedBy="brief")
-     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"brief:write","briefe:write","briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $Livrables;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="briefs")
      * 
+     * @Groups({"brief:write","briefe:write","briefs:write"})
      */
     private $apprenants;
 
@@ -151,13 +160,42 @@ class Brief
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="briefs")
-     * @Groups({"briefsofapprenantofpromo:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"brief:write","briefe:write","briefsofapprenantofpromo:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $formateurs;
     /**
      * @ORM\ManyToOne(targetEntity=EtatBrief::class, inversedBy="briefs")
      */
     private $etatBrief;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, inversedBy="briefs")
+     * @Groups({"brief:write","briefe:write"})
+     */
+    private $niveuEvaluations;
+    /**
+     * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="briefs")
+     * @Groups({"brief:write","briefe:write"})
+     */
+    private $tags;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $archived;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Ressource::class, mappedBy="briefs")
+     * @Groups({"brief:write","briefe:write","briefs:write"})
+     */
+    private $ressources;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="briefs")
+     */
+    private $briefMaPromos;
+
+    
 
     public function __construct()
     {
@@ -167,6 +205,10 @@ class Brief
         $this->competences = new ArrayCollection();
         $this->groupes = new ArrayCollection();
         $this->formateurs = new ArrayCollection();
+        $this->niveuEvaluations = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->ressources = new ArrayCollection();
+        $this->briefMaPromos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -383,6 +425,32 @@ class Brief
         if (!$this->competences->contains($competence)) {
             $this->competences[] = $competence;
         }
+    }
+    public function getReferentiels(): ?Referentiel
+    {
+        return $this->referentiels;
+    }
+
+    public function setReferentiels(?Referentiel $referentiels): self
+    {
+        $this->referentiels = $referentiels;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|NiveauDevaluation[]
+     */
+    public function getNiveuEvaluations(): Collection
+    {
+        return $this->niveuEvaluations;
+    }
+
+    public function addNiveuEvaluation(NiveauDevaluation $niveuEvaluation): self
+    {
+        if (!$this->niveuEvaluations->contains($niveuEvaluation)) {
+            $this->niveuEvaluations[] = $niveuEvaluation;
+        }
 
         return $this;
     }
@@ -391,6 +459,12 @@ class Brief
     {
         if ($this->competences->contains($competence)) {
             $this->competences->removeElement($competence);
+        }
+    }
+    public function removeNiveuEvaluation(NiveauDevaluation $niveuEvaluation): self
+    {
+        if ($this->niveuEvaluations->contains($niveuEvaluation)) {
+            $this->niveuEvaluations->removeElement($niveuEvaluation);
         }
 
         return $this;
@@ -404,8 +478,6 @@ class Brief
     public function setReferentiel(?Referentiel $referentiel): self
     {
         $this->referentiel = $referentiel;
-
-        return $this;
     }
 
     /**
@@ -421,6 +493,20 @@ class Brief
         if (!$this->groupes->contains($groupe)) {
             $this->groupes[] = $groupe;
         }
+    }
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+        }
 
         return $this;
     }
@@ -429,6 +515,12 @@ class Brief
     {
         if ($this->groupes->contains($groupe)) {
             $this->groupes->removeElement($groupe);
+        }
+    }
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tags->contains($tag)) {
+            $this->tags->removeElement($tag);
         }
 
         return $this;
@@ -447,6 +539,33 @@ class Brief
         if (!$this->formateurs->contains($formateur)) {
             $this->formateurs[] = $formateur;
         }
+    }
+    public function getArchived(): ?bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived): self
+    {
+        $this->archived = $archived;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Ressource[]
+     */
+    public function getRessources(): Collection
+    {
+        return $this->ressources;
+    }
+
+    public function addRessource(Ressource $ressource): self
+    {
+        if (!$this->ressources->contains($ressource)) {
+            $this->ressources[] = $ressource;
+            $ressource->setBriefs($this);
+        }
 
         return $this;
     }
@@ -455,6 +574,16 @@ class Brief
     {
         if ($this->formateurs->contains($formateur)) {
             $this->formateurs->removeElement($formateur);
+        }
+    }
+    public function removeRessource(Ressource $ressource): self
+    {
+        if ($this->ressources->contains($ressource)) {
+            $this->ressources->removeElement($ressource);
+            // set the owning side to null (unless already changed)
+            if ($ressource->getBriefs() === $this) {
+                $ressource->setBriefs(null);
+            }
         }
 
         return $this;
@@ -471,4 +600,36 @@ class Brief
 
         return $this;
     }
+    /**
+     * @return Collection|BriefMaPromo[]
+     */
+    public function getBriefMaPromos(): Collection
+    {
+        return $this->briefMaPromos;
+    }
+
+    public function addBriefMaPromo(BriefMaPromo $briefMaPromo): self
+    {
+        if (!$this->briefMaPromos->contains($briefMaPromo)) {
+            $this->briefMaPromos[] = $briefMaPromo;
+            $briefMaPromo->setBriefs($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBriefMaPromo(BriefMaPromo $briefMaPromo): self
+    {
+        if ($this->briefMaPromos->contains($briefMaPromo)) {
+            $this->briefMaPromos->removeElement($briefMaPromo);
+            // set the owning side to null (unless already changed)
+            if ($briefMaPromo->getBriefs() === $this) {
+                $briefMaPromo->setBriefs(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
 }

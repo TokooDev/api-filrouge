@@ -81,7 +81,7 @@ class Promo
      * @ORM\Column(type="integer")
      * @Groups({"promo:read"})
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -137,19 +137,17 @@ class Promo
      * @Groups({"promo:read"})
      */
     private $dateFin;
-
     /**
      * @ORM\OneToMany(targetEntity=Groupe::class, mappedBy="promo")
-     * @Groups({"promo:read"})
+     * @Groups({"promo:read","briefe:write"})
+     *
+     *
      */
     private $groupes;
-
-
     /**
      * @ORM\Column(type="boolean")
      */
     private $archived;
-
     /**
      * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="promos")
      * @Groups({"briefsofpromo:read","briefsofapprenantofpromo:read"})
@@ -160,12 +158,17 @@ class Promo
      * @ORM\ManyToMany(targetEntity=Referentiel::class, inversedBy="promos")
      */
     private $referentiel;
+    /**
+     * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="promos")
+     */
+    private $briefMaPromos;
 
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
         $this->briefs = new ArrayCollection();
         $this->referentiel = new ArrayCollection();
+        $this->briefMaPromos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -342,6 +345,21 @@ class Promo
         if (!$this->referentiel->contains($referentiel)) {
             $this->referentiel[] = $referentiel;
         }
+    }
+    /** 
+     * @return Collection|BriefMaPromo[]
+     */
+    public function getBriefMaPromos(): Collection
+    {
+        return $this->briefMaPromos;
+    }
+
+    public function addBriefMaPromo(BriefMaPromo $briefMaPromo): self
+    {
+        if (!$this->briefMaPromos->contains($briefMaPromo)) {
+            $this->briefMaPromos[] = $briefMaPromo;
+            $briefMaPromo->setPromos($this);
+        }
 
         return $this;
     }
@@ -350,6 +368,16 @@ class Promo
     {
         if ($this->referentiel->contains($referentiel)) {
             $this->referentiel->removeElement($referentiel);
+        }
+    }
+    public function removeBriefMaPromo(BriefMaPromo $briefMaPromo): self
+    {
+        if ($this->briefMaPromos->contains($briefMaPromo)) {
+            $this->briefMaPromos->removeElement($briefMaPromo);
+            // set the owning side to null (unless already changed)
+            if ($briefMaPromo->getPromos() === $this) {
+                $briefMaPromo->setPromos(null);
+            }
         }
 
         return $this;

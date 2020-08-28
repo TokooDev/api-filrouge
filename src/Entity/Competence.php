@@ -29,8 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }, 
  *                 
 *                    
-*                      },    
-                        
+*},                     
 *itemOperations={
  *     "getcompbyID"={
  *              "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_Formateur')",
@@ -61,13 +60,14 @@ class Competence
 
     /**
      * @ORM\Column(type="string", length=255)
-     *@Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofpromo:read","promo:read","briefs:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     *@Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read","briefe:write","briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofpromo:read","promo:read","briefs:read","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read"})
+     * @Groups({"brief:write","competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompcomp:read","groupecompid:read","groupecompidcomp:read","competence:read","grpco:read","briefe:write"})
+     * 
      */
     private $description;
 

@@ -36,6 +36,7 @@ class NiveauDevaluation
 
     /**
      * @ORM\ManyToMany(targetEntity=Competence::class, mappedBy="niveauDevaluation")
+     * @Groups({"brief:write","briefe:write"})
      */
     private $competences;
 
@@ -44,10 +45,15 @@ class NiveauDevaluation
      *  @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefs:read","promo:read"})
      */
     private $libelle;
+    /** 
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="niveuEvaluations")
+     */
+    private $briefs;
 
     public function __construct()
     {
         $this->competences = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -115,6 +121,31 @@ class NiveauDevaluation
     public function setLibelle(?string $libelle): self
     {
         $this->libelle = $libelle;
+    }
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addNiveuEvaluation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeNiveuEvaluation($this);
+        }
 
         return $this;
     }

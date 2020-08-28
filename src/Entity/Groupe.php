@@ -76,7 +76,7 @@ class Groupe
      *      minMessage = "Le libelle ne doit avoir au moins {{ limit }} charactères",
      *      maxMessage = "Le libelle ne doit pas dépasser {{ limit }} charactères"
      * )
-     * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","appreants:read","groupe:read","briefsofpromo:read","promo:read","briefs:read"})
+     * @Groups({"brief:write","briefe:write","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","appreants:read","groupe:read","briefsofpromo:read","promo:read","briefs:read"})
      */
     private $libelle;
 
@@ -93,6 +93,7 @@ class Groupe
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, mappedBy="groupe")
+     * 
      */
     private $formateurs;
 

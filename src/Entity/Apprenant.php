@@ -53,15 +53,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  * },
  * )
  * @ORM\Entity(repositoryClass=ApprenantRepository::class)
+ * 
  */
-class Apprenant
+class Apprenant extends User
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -75,7 +76,6 @@ class Apprenant
      * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $statut;
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"briefsofgroupeofpromo:read","users:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
@@ -85,14 +85,13 @@ class Apprenant
     /**
      * @ORM\OneToOne(targetEntity=User::class, inversedBy="apprenant", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @ApiSubresource
      * @Groups({"briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","appreants:read","profilsdesortie:read","groupe:read","promo:read","briefsofpromo:read"})
      */
     private $user;
 
     /**
      * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="apprenants")
-     * @Groups({"appreants:read"})
+     * @Groups({"appreants:read","briefs:write"})
      */
     private $groupe;
 
@@ -101,22 +100,29 @@ class Apprenant
      * @Groups({"appreants:read"})
      */
     private $profildesortie;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Livrable::class, mappedBy="apprenant")
-     */
-    private $livrables;
-
     /**
      * @ORM\ManyToMany(targetEntity=Brief::class, inversedBy="apprenants")
      */
     private $briefs;
+   
 
+    /**
+     * @ORM\ManyToOne(targetEntity=LivrableAttendusApprenant::class, inversedBy="apprenant")
+     */
+    private $livrableAttendusApprenant;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=BriefApprenant::class, inversedBy="apprenants")
+     */
+    private $briefApprenant;
+
+    
     public function __construct()
     {
         $this->groupe = new ArrayCollection();
         $this->livrables = new ArrayCollection();
         $this->briefs = new ArrayCollection();
+        $this->livrableAttendusApprenants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,17 +154,7 @@ class Apprenant
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
+    
 
     /**
      * @return Collection|Groupe[]
@@ -197,35 +193,6 @@ class Apprenant
 
         return $this;
     }
-
-    /**
-     * @return Collection|Livrable[]
-     */
-    public function getLivrables(): Collection
-    {
-        return $this->livrables;
-    }
-
-    public function addLivrable(Livrable $livrable): self
-    {
-        if (!$this->livrables->contains($livrable)) {
-            $this->livrables[] = $livrable;
-            $livrable->addApprenant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLivrable(Livrable $livrable): self
-    {
-        if ($this->livrables->contains($livrable)) {
-            $this->livrables->removeElement($livrable);
-            $livrable->removeApprenant($this);
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection|Brief[]
      */
@@ -251,4 +218,40 @@ class Apprenant
 
         return $this;
     }
+
+   
+
+    
+    public function getLivrableAttendusApprenant(): ?LivrableAttendusApprenant
+    {
+        return $this->livrableAttendusApprenant;
+    }
+
+    public function setLivrableAttendusApprenant(?LivrableAttendusApprenant $livrableAttendusApprenant): self
+    {
+        $this->livrableAttendusApprenant = $livrableAttendusApprenant;
+
+        return $this;
+    }
+
+    public function getBriefApprenant(): ?BriefApprenant
+    {
+        return $this->briefApprenant;
+    }
+
+    public function setBriefApprenant(?BriefApprenant $briefApprenant): self
+    {
+        $this->briefApprenant = $briefApprenant;
+
+        return $this;
+    }
+
+   
+
+   
+
+    
+
+   
+    
 }

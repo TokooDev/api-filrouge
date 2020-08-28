@@ -51,6 +51,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"admin"="Admin","cm"="CM","formateur"="Formateur", "apprenant"="Apprenant","user"="User"})
  */
 class User implements UserInterface
 {
@@ -58,9 +61,8 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"users:read"})
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
@@ -161,12 +163,6 @@ class User implements UserInterface
      * @Groups({"briefsofapprenantofpromo:read","users:read","appreants:read","profil:read","profilsdesortie:read","promo:read","briefsofpromo:read"})
      */
     private $genre;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Apprenant::class, mappedBy="user", cascade={"persist", "remove"})
-     */
-    private $apprenant;
-
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
      * @ApiSubresource
@@ -327,23 +323,8 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getApprenant(): ?Apprenant
-    {
-        return $this->apprenant;
-    }
-
-    public function setApprenant(Apprenant $apprenant): self
-    {
-        $this->apprenant = $apprenant;
-
-        // set the owning side of the relation if necessary
-        if ($apprenant->getUser() !== $this) {
-            $apprenant->setUser($this);
-        }
-
-        return $this;
-    }
-
+    
+   
     public function getProfil(): ?Profil
     {
         return $this->profil;

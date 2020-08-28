@@ -20,23 +20,13 @@ class Livrable
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
+     * @Groups({"brief:write","briefe:write","briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
     private $libelle;
-
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $datecreation;
-
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $datelivraison;
 
     /**
      * @ORM\ManyToOne(targetEntity=Brief::class, inversedBy="Livrables")
@@ -45,18 +35,29 @@ class Livrable
 
     /**
      * @ORM\OneToMany(targetEntity=LivrablePartiel::class, mappedBy="livrable")
+     * @Groups({"briefs:write"})
      */
     private $livrablePartiels;
 
+    
     /**
-     * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="livrables")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"briefs:write","briefe:write"})
      */
-    private $apprenant;
+    private $description;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LivrableAttendusApprenant::class, mappedBy="Livrable")
+     */
+    private $livrableAttendusApprenants;
+
+   
 
     public function __construct()
     {
         $this->livrablePartiels = new ArrayCollection();
         $this->apprenant = new ArrayCollection();
+        $this->livrableAttendusApprenants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,29 +77,7 @@ class Livrable
         return $this;
     }
 
-    public function getDatecreation(): ?\DateTimeInterface
-    {
-        return $this->datecreation;
-    }
-
-    public function setDatecreation(?\DateTimeInterface $datecreation): self
-    {
-        $this->datecreation = $datecreation;
-
-        return $this;
-    }
-
-    public function getDatelivraison(): ?\DateTimeInterface
-    {
-        return $this->datelivraison;
-    }
-
-    public function setDatelivraison(?\DateTimeInterface $datelivraison): self
-    {
-        $this->datelivraison = $datelivraison;
-
-        return $this;
-    }
+   
 
     public function getBrief(): ?Brief
     {
@@ -143,29 +122,48 @@ class Livrable
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     /**
-     * @return Collection|Apprenant[]
+     * @return Collection|LivrableAttendusApprenant[]
      */
-    public function getApprenant(): Collection
+    public function getLivrableAttendusApprenants(): Collection
     {
-        return $this->apprenant;
+        return $this->livrableAttendusApprenants;
     }
 
-    public function addApprenant(Apprenant $apprenant): self
+    public function addLivrableAttendusApprenant(LivrableAttendusApprenant $livrableAttendusApprenant): self
     {
-        if (!$this->apprenant->contains($apprenant)) {
-            $this->apprenant[] = $apprenant;
+        if (!$this->livrableAttendusApprenants->contains($livrableAttendusApprenant)) {
+            $this->livrableAttendusApprenants[] = $livrableAttendusApprenant;
+            $livrableAttendusApprenant->setLivrable($this);
         }
 
         return $this;
     }
 
-    public function removeApprenant(Apprenant $apprenant): self
+    public function removeLivrableAttendusApprenant(LivrableAttendusApprenant $livrableAttendusApprenant): self
     {
-        if ($this->apprenant->contains($apprenant)) {
-            $this->apprenant->removeElement($apprenant);
+        if ($this->livrableAttendusApprenants->contains($livrableAttendusApprenant)) {
+            $this->livrableAttendusApprenants->removeElement($livrableAttendusApprenant);
+            // set the owning side to null (unless already changed)
+            if ($livrableAttendusApprenant->getLivrable() === $this) {
+                $livrableAttendusApprenant->setLivrable(null);
+            }
         }
 
         return $this;
     }
+
+    
 }

@@ -18,14 +18,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource()
  * @ORM\Entity(repositoryClass=FormateurRepository::class)
  */
-class Formateur
+class Formateur extends User
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    protected $id;
     /**
      * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="formateurs")
      * 
@@ -105,6 +105,7 @@ class Formateur
         if (!$this->briefs->contains($brief)) {
             $this->briefs[] = $brief;
             $brief->addFormateur($this);
+            $brief->setFormateurs($this);
         }
 
         return $this;
@@ -115,6 +116,10 @@ class Formateur
         if ($this->briefs->contains($brief)) {
             $this->briefs->removeElement($brief);
             $brief->removeFormateur($this);
+            // set the owning side to null (unless already changed)
+            if ($brief->getFormateurs() === $this) {
+                $brief->setFormateurs(null);
+            }
         }
 
         return $this;

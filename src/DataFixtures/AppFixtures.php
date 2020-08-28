@@ -22,7 +22,7 @@ class AppFixtures extends Fixture
         $faker = Faker\Factory::create('fr_FR');
         for($i=0; $i<4; $i++){
             $profil = new Profil();
-            $profil->setLibelle($faker->unique()->randomElement(['Admin','Formateur','CM','Apprenant']));
+            $profil->setLibelle($faker->unique()->randomElement(['ADMIN','Formateur','CM','Apprenant']));
             $manager->persist($profil);
             $user = new User();
             $harsh = $this->encoder->encodePassword($user, 'passer');
