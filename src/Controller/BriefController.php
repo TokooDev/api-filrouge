@@ -77,7 +77,7 @@ class BriefController extends AbstractController
               
                $briefApprenant=new BriefApprenant();
                $apprenant=$apprenantRepository->findOneById($data['apprenant_id']);
-               dd($apprenant);
+               //dd($apprenant);
                $statut=$data['statut']?? "livrer";
                $briefApprenant->setStatut($statut);
                $briefApprenant->addApprenant($apprenant);
@@ -143,13 +143,9 @@ class BriefController extends AbstractController
                     return $this->json(["message"=>"la demande n'a pas été trouvée "],
                 Response::HTTP_NOT_FOUND);
         }
-            
-        
-
-        
-
-       
-
+                    return $this->json(["message"=>"modifie avec succés "],
+                Response::HTTP_NOT_FOUND);
+ 
     }
     /**
      *path="/formateurs/promo/{id_promo}/briefs/{id_brief}", 

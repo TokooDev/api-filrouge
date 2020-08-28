@@ -32,7 +32,7 @@ class BriefApprenant
     private $apprenants;
 
     /**
-     * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="briefApprenant")
+     * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="briefApprenant",cascade={"persist"})
      */
     private $briefmaPromos;
 

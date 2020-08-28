@@ -30,7 +30,7 @@ class BriefMaPromo
     private $briefs;
 
     /**
-     * @ORM\ManyToOne(targetEntity=BriefApprenant::class, inversedBy="briefmaPromos")
+     * @ORM\ManyToOne(targetEntity=BriefApprenant::class, inversedBy="briefmaPromos",cascade={"persist"})
      */
     private $briefApprenant;
 
