@@ -122,23 +122,24 @@ class Brief
      */
     private $modaliteDevaluation;
     /**
-     * @ORM\ManyToMany(targetEntity=Promo::class, inversedBy="briefs")
+     * @ORM\ManyToMany(targetEntity=LivrablePartiel::class, inversedBy="briefs")
      * @Groups({"brief:write","briefsofgroupeofpromo:read"})
+     * 
      */
-    private $promos;
+    private $LivrablePartiel;
 
     /**
      * @ORM\OneToMany(targetEntity=Livrable::class, mappedBy="brief")
      * @Groups({"brief:write","briefe:write","briefsvalidesofformateur:read","briefsbrouillonsofformateur:read","briefsbrouillonofformateur:read","briefsofapprenantofpromo:read","briefs:read","briefsofpromo:read","briefsofgroupeofpromo:read"})
      */
-    private $Livrables;
+    private $livrable;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="briefs")
-     * 
+     * @ORM\ManyToMany(targetEntity=NiveauDevaluation::class, inversedBy="briefs")
      * @Groups({"brief:write","briefe:write","briefs:write"})
+     * 
      */
-    private $apprenants;
+    private $niveauDevaluation;
 
     /**
      * @ORM\ManyToMany(targetEntity=Competence::class, inversedBy="briefs")
@@ -147,8 +148,14 @@ class Brief
     private $competences;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="briefs")
+     * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="briefs")
      * @Groups({"briefsofpromo:read","briefsofapprenantofpromo:read","briefsofgroupeofpromo:read"})
+     * 
+     */
+    private $groupe;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="briefs")
      */
     private $referentiel;
 
@@ -196,9 +203,18 @@ class Brief
     private $briefMaPromos;
 
     
+    /**
+     * @ORM\ManyToMany(targetEntity=Promo::class, mappedBy="Brief")
+     */
+    private $promos;
 
+    
     public function __construct()
     {
+        $this->LivrablePartiel = new ArrayCollection();
+        $this->livrable = new ArrayCollection();
+        $this->niveauDevaluation = new ArrayCollection();
+        $this->groupe = new ArrayCollection();
         $this->promos = new ArrayCollection();
         $this->Livrables = new ArrayCollection();
         $this->apprenants = new ArrayCollection();
@@ -328,26 +344,26 @@ class Brief
     }
 
     /**
-     * @return Collection|Promo[]
+     * @return Collection|LivrablePartiel[]
      */
-    public function getPromos(): Collection
+    public function getLivrablePartiel(): Collection
     {
-        return $this->promos;
+        return $this->LivrablePartiel;
     }
 
-    public function addPromo(Promo $promo): self
+    public function addLivrablePartiel(LivrablePartiel $livrablePartiel): self
     {
-        if (!$this->promos->contains($promo)) {
-            $this->promos[] = $promo;
+        if (!$this->LivrablePartiel->contains($livrablePartiel)) {
+            $this->LivrablePartiel[] = $livrablePartiel;
         }
 
         return $this;
     }
 
-    public function removePromo(Promo $promo): self
+    public function removeLivrablePartiel(LivrablePartiel $livrablePartiel): self
     {
-        if ($this->promos->contains($promo)) {
-            $this->promos->removeElement($promo);
+        if ($this->LivrablePartiel->contains($livrablePartiel)) {
+            $this->LivrablePartiel->removeElement($livrablePartiel);
         }
 
         return $this;
@@ -356,16 +372,15 @@ class Brief
     /**
      * @return Collection|Livrable[]
      */
-    public function getLivrables(): Collection
+    public function getLivrable(): Collection
     {
-        return $this->Livrables;
+        return $this->livrable;
     }
 
     public function addLivrable(Livrable $livrable): self
     {
-        if (!$this->Livrables->contains($livrable)) {
-            $this->Livrables[] = $livrable;
-            $livrable->setBrief($this);
+        if (!$this->livrable->contains($livrable)) {
+            $this->livrable[] = $livrable;
         }
 
         return $this;
@@ -373,40 +388,51 @@ class Brief
 
     public function removeLivrable(Livrable $livrable): self
     {
-        if ($this->Livrables->contains($livrable)) {
-            $this->Livrables->removeElement($livrable);
-            // set the owning side to null (unless already changed)
-            if ($livrable->getBrief() === $this) {
-                $livrable->setBrief(null);
-            }
+        if ($this->livrable->contains($livrable)) {
+            $this->livrable->removeElement($livrable);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection|Apprenant[]
+     * @return Collection|NiveauDevaluation[]
      */
-    public function getApprenants(): Collection
+    public function getNiveauDevaluation(): Collection
     {
-        return $this->apprenants;
+        return $this->niveauDevaluation;
     }
 
-    public function addApprenant(Apprenant $apprenant): self
+    public function addNiveauDevaluation(NiveauDevaluation $niveauDevaluation): self
     {
-        if (!$this->apprenants->contains($apprenant)) {
-            $this->apprenants[] = $apprenant;
-            $apprenant->addBrief($this);
+        if (!$this->niveauDevaluation->contains($niveauDevaluation)) {
+            $this->niveauDevaluation[] = $niveauDevaluation;
         }
 
         return $this;
     }
 
-    public function removeApprenant(Apprenant $apprenant): self
+    public function removeNiveauDevaluation(NiveauDevaluation $niveauDevaluation): self
     {
-        if ($this->apprenants->contains($apprenant)) {
-            $this->apprenants->removeElement($apprenant);
-            $apprenant->removeBrief($this);
+        if ($this->niveauDevaluation->contains($niveauDevaluation)) {
+            $this->niveauDevaluation->removeElement($niveauDevaluation);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Groupe[]
+     */
+    public function getGroupe(): Collection
+    {
+        return $this->groupe;
+    }
+
+    public function addGroupe(Groupe $groupe): self
+    {
+        if (!$this->groupe->contains($groupe)) {
+            $this->groupe[] = $groupe;
         }
 
         return $this;
@@ -466,6 +492,12 @@ class Brief
         if ($this->niveuEvaluations->contains($niveuEvaluation)) {
             $this->niveuEvaluations->removeElement($niveuEvaluation);
         }
+    }
+    public function removeGroupe(Groupe $groupe): self
+    {
+        if ($this->groupe->contains($groupe)) {
+            $this->groupe->removeElement($groupe);
+        }
 
         return $this;
     }
@@ -481,20 +513,6 @@ class Brief
     }
 
     /**
-     * @return Collection|Groupe[]
-     */
-    public function getGroupes(): Collection
-    {
-        return $this->groupes;
-    }
-
-    public function addGroupe(Groupe $groupe): self
-    {
-        if (!$this->groupes->contains($groupe)) {
-            $this->groupes[] = $groupe;
-        }
-    }
-    /**
      * @return Collection|Tag[]
      */
     public function getTags(): Collection
@@ -509,13 +527,6 @@ class Brief
         }
 
         return $this;
-    }
-
-    public function removeGroupe(Groupe $groupe): self
-    {
-        if ($this->groupes->contains($groupe)) {
-            $this->groupes->removeElement($groupe);
-        }
     }
     public function removeTag(Tag $tag): self
     {
@@ -585,6 +596,21 @@ class Brief
                 $ressource->setBriefs(null);
             }
         }
+    }
+    /**
+     * @return Collection|Promo[]
+     */
+    public function getPromos(): Collection
+    {
+        return $this->promos;
+    }
+
+    public function addPromo(Promo $promo): self
+    {
+        if (!$this->promos->contains($promo)) {
+            $this->promos[] = $promo;
+            $promo->addBrief($this);
+        }
 
         return $this;
     }
@@ -614,6 +640,13 @@ class Brief
             $this->briefMaPromos[] = $briefMaPromo;
             $briefMaPromo->setBriefs($this);
         }
+    }
+    public function removePromo(Promo $promo): self
+    {
+        if ($this->promos->contains($promo)) {
+            $this->promos->removeElement($promo);
+            $promo->removeBrief($this);
+        }
 
         return $this;
     }
@@ -632,4 +665,6 @@ class Brief
     }
 
    
+    
+
 }

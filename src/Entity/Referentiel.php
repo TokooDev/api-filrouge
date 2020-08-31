@@ -71,12 +71,13 @@ class Referentiel
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *  @Groups({"apprenantscompetences:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefsofpromo:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write","stats:read","collectionApprenant:read","Apprenant:read","brief:write","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write","briefsofgroupeofpromo:read","briefsofapprenantofpromo:read","briefsofpromo:read","ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
      */
     private $libelle;
 
@@ -106,7 +107,7 @@ class Referentiel
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeDeCompetence::class, inversedBy="referentiels")
-     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write"})
+     * @Groups({"ref_grpe:read","competence:read","afficherGr:read","grpco:read","grpcom:write","apprenantscompetences:read","stats:read"})
      */
     private $GroupeDeCompetences;
 
@@ -120,11 +121,23 @@ class Referentiel
      */
     private $promos;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="referentiel")
+     */
+    private $apprenants;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="referentiel")
+     */
+    private $competencesValides;
+
     public function __construct()
     {
         $this->GroupeDeCompetences = new ArrayCollection();
         $this->briefs = new ArrayCollection();
         $this->promos = new ArrayCollection();
+        $this->apprenants = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -272,6 +285,68 @@ class Referentiel
         if ($this->promos->contains($promo)) {
             $this->promos->removeElement($promo);
             $promo->removeReferentiel($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Apprenant[]
+     */
+    public function getApprenants(): Collection
+    {
+        return $this->apprenants;
+    }
+
+    public function addApprenant(Apprenant $apprenant): self
+    {
+        if (!$this->apprenants->contains($apprenant)) {
+            $this->apprenants[] = $apprenant;
+            $apprenant->setReferentiel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApprenant(Apprenant $apprenant): self
+    {
+        if ($this->apprenants->contains($apprenant)) {
+            $this->apprenants->removeElement($apprenant);
+            // set the owning side to null (unless already changed)
+            if ($apprenant->getReferentiel() === $this) {
+                $apprenant->setReferentiel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setReferentiel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getReferentiel() === $this) {
+                $competencesValide->setReferentiel(null);
+            }
         }
 
         return $this;

@@ -60,7 +60,8 @@ class Apprenant extends User
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer")*
+     *@Groups({"collectionApprenant:read","Apprenant:read","livrablepartiel:read"})
      */
     protected $id;
 
@@ -115,6 +116,37 @@ class Apprenant extends User
      * @ORM\ManyToOne(targetEntity=BriefApprenant::class, inversedBy="apprenants")
      */
     private $briefApprenant;
+    /**
+     * @ORM\ManyToMany(targetEntity=LivrablePartiel::class, mappedBy="apprenants")
+     */
+    private $livrablePartiels;
+
+   
+
+    /**
+     * @ORM\OneToMany(targetEntity=LivrablePartielDunApprenant::class, mappedBy="apprenant")
+     */
+    private $LivrablePartielDunApprenant;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="apprenants")
+     
+     */
+    private $promo;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="apprenants")
+     * @Groups({"stats:read","Apprenant:read"})
+     */
+    private $referentiel;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="apprenant")
+     * @Groups({"collectionApprenant:read","Apprenant:read"})
+     */
+    private $competencesValides;
+
+    
 
     
     public function __construct()
@@ -123,6 +155,10 @@ class Apprenant extends User
         $this->livrables = new ArrayCollection();
         $this->briefs = new ArrayCollection();
         $this->livrableAttendusApprenants = new ArrayCollection();
+        $this->livrablePartiels = new ArrayCollection();
+        $this->livrablesDunApprenant = new ArrayCollection();
+        $this->LivrablePartielDunApprenant = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,6 +242,21 @@ class Apprenant extends User
         if (!$this->briefs->contains($brief)) {
             $this->briefs[] = $brief;
         }
+    }
+    /**
+     * @return Collection|LivrablePartiel[]
+     */
+    public function getLivrablePartiels(): Collection
+    {
+        return $this->livrablePartiels;
+    }
+
+    public function addLivrablePartiel(LivrablePartiel $livrablePartiel): self
+    {
+        if (!$this->livrablePartiels->contains($livrablePartiel)) {
+            $this->livrablePartiels[] = $livrablePartiel;
+            $livrablePartiel->addApprenant($this);
+        }
 
         return $this;
     }
@@ -215,13 +266,17 @@ class Apprenant extends User
         if ($this->briefs->contains($brief)) {
             $this->briefs->removeElement($brief);
         }
+    }
+    public function removeLivrablePartiel(LivrablePartiel $livrablePartiel): self
+    {
+        if ($this->livrablePartiels->contains($livrablePartiel)) {
+            $this->livrablePartiels->removeElement($livrablePartiel);
+            $livrablePartiel->removeApprenant($this);
+        }
 
         return $this;
     }
 
-   
-
-    
     public function getLivrableAttendusApprenant(): ?LivrableAttendusApprenant
     {
         return $this->livrableAttendusApprenant;
@@ -230,6 +285,21 @@ class Apprenant extends User
     public function setLivrableAttendusApprenant(?LivrableAttendusApprenant $livrableAttendusApprenant): self
     {
         $this->livrableAttendusApprenant = $livrableAttendusApprenant;
+    }
+    /**
+     * @return Collection|LivrablePartielDunApprenant[]
+     */
+    public function getLivrablePartielDunApprenant(): Collection
+    {
+        return $this->LivrablePartielDunApprenant;
+    }
+
+    public function addLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
+    {
+        if (!$this->LivrablePartielDunApprenant->contains($livrablePartielDunApprenant)) {
+            $this->LivrablePartielDunApprenant[] = $livrablePartielDunApprenant;
+            $livrablePartielDunApprenant->setApprenant($this);
+        }
 
         return $this;
     }
@@ -242,16 +312,73 @@ class Apprenant extends User
     public function setBriefApprenant(?BriefApprenant $briefApprenant): self
     {
         $this->briefApprenant = $briefApprenant;
+    }
+    public function removeLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
+    {
+        if ($this->LivrablePartielDunApprenant->contains($livrablePartielDunApprenant)) {
+            $this->LivrablePartielDunApprenant->removeElement($livrablePartielDunApprenant);
+            // set the owning side to null (unless already changed)
+            if ($livrablePartielDunApprenant->getApprenant() === $this) {
+                $livrablePartielDunApprenant->setApprenant(null);
+            }
+        }
+
+        return $this;
+    }
+    
+    public function getPromo(): ?Promo
+    {
+        return $this->promo;
+    }
+
+    public function setPromo(?Promo $promo): self
+    {
+        $this->promo = $promo;
 
         return $this;
     }
 
-   
+    public function getReferentiel(): ?Referentiel
+    {
+        return $this->referentiel;
+    }
 
-   
+    public function setReferentiel(?Referentiel $referentiel): self
+    {
+        $this->referentiel = $referentiel;
 
-    
+        return $this;
+    }
 
-   
-    
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getApprenant() === $this) {
+                $competencesValide->setApprenant(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

@@ -5,10 +5,84 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LivrablePartielRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ * collectionOperations={
+ * 
+ *              "get_apprenants"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="formateurs/promo/{id}/referentiel/{idp}/competences" ,
+*                   "route_name"="get_apprenants",
+*                   "normalization_context"={"groups"={"collectionApprenant:read"}},
+*                },
+*                "get_apprenant"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="apprenant/{id}/promo/{id_promo}/referentiel/{id_ref}/competences" ,
+*                   "route_name"="get_apprenant",
+*                   "normalization_context"={"groups"={"Apprenant:read"}},
+*                },
+*               "brief_apprenant"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="apprenants/{id}/promo/{id_promo}/referentiel/{id_ref}/statistiques/briefs" ,
+*                   "route_name"="brief_apprenant",
+*                   "normalization_context"={"groups"={"Apprenant:read"}},
+*                },
+*               "statistiques"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="formateurs/promo/{id_promo}/referentiel/{id_ref}/statistiques/competences" ,
+*                   "route_name"="statistiques",
+*                   "normalization_context"={"groups"={"stats:read"}},
+*                   },
+*               "commentaires_livrablePartiel"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="GET",
+*                   "path"="formateurs/livrablepartiels/{id}/commentaires" ,
+*                   "route_name"="commentaires_livrablePartiel",
+*                   "normalization_context"={"groups"={"commentaireslivrablepartiel:read"}},
+*                   },
+*               "commentaires_livrablePartiel_post"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="POST",
+*                   "path"="formateurs/livrablepartiels/{id}/commentaires" ,
+*                   "route_name"="commentaires_livrablePartiel_post",
+*                   "normalization_context"={"groups"={"commentaireslivrablepartiel:write"}},
+*                   },
+*                   "ajout_livrablePartiel"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="POST",
+*                   "path"="formateurs/promo/{id_promo}/brief/{id_br}/livrablepartiels" ,
+*                   "route_name"="ajout_livrablePartiel",
+*                   
+*                   },
+*
+*},
+*itemOperations={
+*    "ajout_livrablePartiel"={
+*                   "security"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR'))",
+*                   "security_message"="Vous n'avez pas access à cette Ressource",
+*                   "method"="POST",
+*                   "path"="formateurs/promo/{id_promo}/brief/{id_br}/livrablepartiels" ,
+*                   "route_name"="ajout_livrablePartiel",
+*                   "normalization_context"={"groups"={"livrablepartiel:read"}},
+*                   },
+*
+ * }, 
+ * )
  * @ORM\Entity(repositoryClass=LivrablePartielRepository::class)
  */
 class LivrablePartiel
@@ -17,57 +91,95 @@ class LivrablePartiel
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *@Groups({"collectionApprenant:read",})
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"collectionApprenant:read","livrablepartiel:write"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:write"})
+     *  @Groups({"briefs:write","livrablepartiel:read","livrablepartiel:write"})
      */
-    private $lienGithub;
+    private $Github;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:write"})
+     * @Groups({"livrablepartiel:read","livrablepartiel:write","briefs:write"})
      */
-    private $lienFigma;
+    private $Trello;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:write"})
+     * @Groups({"livrablepartiel:read","livrablepartiel:write","briefs:write"})
      */
-    private $lienTrello;
+    private $figma;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"briefs:write"})
+     * @Groups({"livrablepartiel:read","livrablepartiel:write","briefs:write"})
      */
     private $deploiement;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
+     *  @Groups({"livrablepartiel:read","livrablepartiel:write"})
      */
     private $fichier;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="date")
+     * @Groups({"livrablepartiel:write"})
      */
-    private $dateCreation;
+    private $DateDeCreation;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="date")
+     * @Groups({"livrablepartiel:write"})
      */
-    private $dateLivraison;
+    private $DateDeLivraison;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Livrable::class, inversedBy="livrablePartiels")
+     * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="livrablePartiels")
+     * @Groups({"collectionApprenant:read","stats:read","Apprenant:read","livrablepartiel:write"})
      */
-    private $livrable;
+    private $apprenants;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="livrablePartiels")
+     */
+    private $formateurs;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Groupe::class, inversedBy="livrablePartiels")
+     *  @Groups({"livrablepartiel:write"})
+     */
+    private $groupes;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Livrable::class, inversedBy="livrablePartiels")
+     */
+    private $livrables;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LivrablePartielDunApprenant::class, mappedBy="livrablePartiel")
+     */
+    private $livrablePartielDunApprenant;
+
+    
+    
+    public function __construct()
+    {
+        $this->apprenants = new ArrayCollection();
+        $this->formateurs = new ArrayCollection();
+        $this->groupes = new ArrayCollection();
+        $this->livrables = new ArrayCollection();
+        $this->livrablePartielDunApprenant = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -79,45 +191,45 @@ class LivrablePartiel
         return $this->libelle;
     }
 
-    public function setLibelle(?string $libelle): self
+    public function setLibelle(string $libelle): self
     {
         $this->libelle = $libelle;
 
         return $this;
     }
 
-    public function getLienGithub(): ?string
+    public function getGithub(): ?string
     {
-        return $this->lienGithub;
+        return $this->Github;
     }
 
-    public function setLienGithub(?string $lienGithub): self
+    public function setGithub(string $Github): self
     {
-        $this->lienGithub = $lienGithub;
+        $this->Github = $Github;
 
         return $this;
     }
 
-    public function getLienFigma(): ?string
+    public function getTrello(): ?string
     {
-        return $this->lienFigma;
+        return $this->Trello;
     }
 
-    public function setLienFigma(?string $lienFigma): self
+    public function setTrello(string $Trello): self
     {
-        $this->lienFigma = $lienFigma;
+        $this->Trello = $Trello;
 
         return $this;
     }
 
-    public function getLienTrello(): ?string
+    public function getFigma(): ?string
     {
-        return $this->lienTrello;
+        return $this->figma;
     }
 
-    public function setLienTrello(?string $lienTrello): self
+    public function setFigma(string $figma): self
     {
-        $this->lienTrello = $lienTrello;
+        $this->figma = $figma;
 
         return $this;
     }
@@ -127,7 +239,7 @@ class LivrablePartiel
         return $this->deploiement;
     }
 
-    public function setDeploiement(?string $deploiement): self
+    public function setDeploiement(string $deploiement): self
     {
         $this->deploiement = $deploiement;
 
@@ -139,46 +251,170 @@ class LivrablePartiel
         return $this->fichier;
     }
 
-    public function setFichier(?string $fichier): self
+    public function setFichier(string $fichier): self
     {
         $this->fichier = $fichier;
 
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTimeInterface
+    public function getDateDeCreation(): ?\DateTimeInterface
     {
-        return $this->dateCreation;
+        return $this->DateDeCreation;
     }
 
-    public function setDateCreation(?\DateTimeInterface $dateCreation): self
+    public function setDateDeCreation(\DateTimeInterface $DateDeCreation): self
     {
-        $this->dateCreation = $dateCreation;
+        $this->DateDeCreation = $DateDeCreation;
 
         return $this;
     }
 
-    public function getDateLivraison(): ?\DateTimeInterface
+    public function getDateDeLivraison(): ?\DateTimeInterface
     {
-        return $this->dateLivraison;
+        return $this->DateDeLivraison;
     }
 
-    public function setDateLivraison(?\DateTimeInterface $dateLivraison): self
+    public function setDateDeLivraison(\DateTimeInterface $DateDeLivraison): self
     {
-        $this->dateLivraison = $dateLivraison;
+        $this->DateDeLivraison = $DateDeLivraison;
 
         return $this;
     }
 
-    public function getLivrable(): ?Livrable
+    /**
+     * @return Collection|Apprenant[]
+     */
+    public function getApprenants(): Collection
     {
-        return $this->livrable;
+        return $this->apprenants;
     }
 
-    public function setLivrable(?Livrable $livrable): self
+    public function addApprenant(Apprenant $apprenant): self
     {
-        $this->livrable = $livrable;
+        if (!$this->apprenants->contains($apprenant)) {
+            $this->apprenants[] = $apprenant;
+        }
 
         return $this;
     }
+
+    public function removeApprenant(Apprenant $apprenant): self
+    {
+        if ($this->apprenants->contains($apprenant)) {
+            $this->apprenants->removeElement($apprenant);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Formateur[]
+     */
+    public function getFormateurs(): Collection
+    {
+        return $this->formateurs;
+    }
+
+    public function addFormateur(Formateur $formateur): self
+    {
+        if (!$this->formateurs->contains($formateur)) {
+            $this->formateurs[] = $formateur;
+        }
+
+        return $this;
+    }
+
+    public function removeFormateur(Formateur $formateur): self
+    {
+        if ($this->formateurs->contains($formateur)) {
+            $this->formateurs->removeElement($formateur);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Groupe[]
+     */
+    public function getGroupes(): Collection
+    {
+        return $this->groupes;
+    }
+
+    public function addGroupe(Groupe $groupe): self
+    {
+        if (!$this->groupes->contains($groupe)) {
+            $this->groupes[] = $groupe;
+        }
+
+        return $this;
+    }
+
+    public function removeGroupe(Groupe $groupe): self
+    {
+        if ($this->groupes->contains($groupe)) {
+            $this->groupes->removeElement($groupe);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Livrable[]
+     */
+    public function getLivrables(): Collection
+    {
+        return $this->livrables;
+    }
+
+    public function addLivrable(Livrable $livrable): self
+    {
+        if (!$this->livrables->contains($livrable)) {
+            $this->livrables[] = $livrable;
+        }
+
+        return $this;
+    }
+
+    public function removeLivrable(Livrable $livrable): self
+    {
+        if ($this->livrables->contains($livrable)) {
+            $this->livrables->removeElement($livrable);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LivrablePartielDunApprenant[]
+     */
+    public function getLivrablePartielDunApprenant(): Collection
+    {
+        return $this->livrablePartielDunApprenant;
+    }
+
+    public function addLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
+    {
+        if (!$this->livrablePartielDunApprenant->contains($livrablePartielDunApprenant)) {
+            $this->livrablePartielDunApprenant[] = $livrablePartielDunApprenant;
+            $livrablePartielDunApprenant->setLivrablePartiel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivrablePartielDunApprenant(LivrablePartielDunApprenant $livrablePartielDunApprenant): self
+    {
+        if ($this->livrablePartielDunApprenant->contains($livrablePartielDunApprenant)) {
+            $this->livrablePartielDunApprenant->removeElement($livrablePartielDunApprenant);
+            // set the owning side to null (unless already changed)
+            if ($livrablePartielDunApprenant->getLivrablePartiel() === $this) {
+                $livrablePartielDunApprenant->setLivrablePartiel(null);
+            }
+        }
+
+        return $this;
+    }
+   
 }

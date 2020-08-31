@@ -24,13 +24,13 @@ class NiveauDevaluation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read","apprenantscompetences:read","stats:read","Apprenant:read"})
      */
     private $Actions;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read"})
+     * @Groups({"competencesEtNiveaux:read","competencesEtNiveaux:write","compgetid:read","compgetid:write","groupecomp:read","groupecompid:read","apprenantscompetences:read"})
      */
     private $Criteres;
 
@@ -47,6 +47,7 @@ class NiveauDevaluation
     private $libelle;
     /** 
      * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="niveuEvaluations")
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="niveauDevaluation")
      */
     private $briefs;
 
@@ -135,6 +136,7 @@ class NiveauDevaluation
         if (!$this->briefs->contains($brief)) {
             $this->briefs[] = $brief;
             $brief->addNiveuEvaluation($this);
+            $brief->addNiveauDevaluation($this);
         }
 
         return $this;
@@ -145,6 +147,7 @@ class NiveauDevaluation
         if ($this->briefs->contains($brief)) {
             $this->briefs->removeElement($brief);
             $brief->removeNiveuEvaluation($this);
+            $brief->removeNiveauDevaluation($this);
         }
 
         return $this;

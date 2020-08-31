@@ -51,13 +51,30 @@ class Livrable
      */
     private $livrableAttendusApprenants;
 
-   
+    /**
+     * @ORM\Column(type="string", length=255)
+     * 
+     */
+    private $dateDeCreation;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $dateDeLivraison;
+
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="livrable")
+     */
+    private $briefs;
 
     public function __construct()
     {
         $this->livrablePartiels = new ArrayCollection();
         $this->apprenant = new ArrayCollection();
         $this->livrableAttendusApprenants = new ArrayCollection();
+        $this->LivrableDunApprenant = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,15 +87,12 @@ class Livrable
         return $this->libelle;
     }
 
-    public function setLibelle(?string $libelle): self
+    public function setLibelle(string $libelle): self
     {
         $this->libelle = $libelle;
 
         return $this;
     }
-
-   
-
     public function getBrief(): ?Brief
     {
         return $this->brief;
@@ -87,6 +101,27 @@ class Livrable
     public function setBrief(?Brief $brief): self
     {
         $this->brief = $brief;
+    }
+    public function getDateDeCreation(): ?string
+    {
+        return $this->dateDeCreation;
+    }
+
+    public function setDateDeCreation(string $dateDeCreation): self
+    {
+        $this->dateDeCreation = $dateDeCreation;
+
+        return $this;
+    }
+
+    public function getDateDeLivraison(): ?string
+    {
+        return $this->dateDeLivraison;
+    }
+
+    public function setDateDeLivraison(string $dateDeLivraison): self
+    {
+        $this->dateDeLivraison = $dateDeLivraison;
 
         return $this;
     }
@@ -103,7 +138,7 @@ class Livrable
     {
         if (!$this->livrablePartiels->contains($livrablePartiel)) {
             $this->livrablePartiels[] = $livrablePartiel;
-            $livrablePartiel->setLivrable($this);
+            $livrablePartiel->addLivrable($this);
         }
 
         return $this;
@@ -113,10 +148,7 @@ class Livrable
     {
         if ($this->livrablePartiels->contains($livrablePartiel)) {
             $this->livrablePartiels->removeElement($livrablePartiel);
-            // set the owning side to null (unless already changed)
-            if ($livrablePartiel->getLivrable() === $this) {
-                $livrablePartiel->setLivrable(null);
-            }
+            $livrablePartiel->removeLivrable($this);
         }
 
         return $this;
@@ -148,6 +180,23 @@ class Livrable
             $this->livrableAttendusApprenants[] = $livrableAttendusApprenant;
             $livrableAttendusApprenant->setLivrable($this);
         }
+    }
+    
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addLivrable($this);
+        }
 
         return $this;
     }
@@ -160,6 +209,13 @@ class Livrable
             if ($livrableAttendusApprenant->getLivrable() === $this) {
                 $livrableAttendusApprenant->setLivrable(null);
             }
+        }
+    }
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeLivrable($this);
         }
 
         return $this;
